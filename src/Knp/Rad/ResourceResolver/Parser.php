@@ -1,6 +1,6 @@
 <?php
 
-namespace Knp\Rad\ResourceResolver\Parser;
+namespace Knp\Rad\ResourceResolver;
 
 interface Parser
 {
