@@ -3,7 +3,7 @@
 namespace Knp\Rad\ResourceResolver\EventListener;
 
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Knp\Rad\ResourceResolver\Parser\Parser;
+use Knp\Rad\ResourceResolver\Parser;
 use Knp\Rad\ResourceResolver\ResourceResolver;
 
 class ResourcesListener
@@ -23,7 +23,7 @@ class ResourcesListener
         $resources = $request->attributes->get('_resources');
 
         foreach ($resources as $resourceKey => $resourceSyntax) {
-            $path = $this->parser->parse($resourceSyntax, $request->attributes);
+            $path = $this->parser->parse($resourceSyntax, $request->attributes->get('parameters'));
             $resource = $this
                 ->resolver
                 ->resolveResource(

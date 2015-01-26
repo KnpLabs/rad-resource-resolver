@@ -2,11 +2,19 @@
 
 namespace Knp\Rad\ResourceResolver\Parser;
 
-use Knp\Rad\ResourceResolver\Parser\Parser;
+use Knp\Rad\ResourceResolver\Parser;
+use Knp\Rad\ResourceResolver\ParameterResolver;
 
 class SyntaxParser implements Parser
 {
-    public function parse($string)
+    private $parameterResolvers;
+
+    public function __construct()
+    {
+        $this->parameterResolvers = [];
+    }
+
+    public function parse($string, array $routeParameters)
     {
         $pattern = '/^@(?<serviceId>[a-zA-Z0-9_\-\.]+)::(?<method>[a-zA-Z0-9_-]+)\((?<parameters>.*)\)$/';
         $parsed = preg_match($pattern, $string, $matches);
@@ -17,27 +25,45 @@ class SyntaxParser implements Parser
 
         $parameters = explode(',', $matches['parameters']);
 
-        $parameters = array_map(function($value) {
+        $parameters = array_map(function($value) use ($routeParameters) {
+
             $value = trim($value);
-            $stringPattern = '/.*["\'].*/';
-            if (preg_match($stringPattern, $value)) {
-                $value = trim($value, '"\'');
-                return (string) $value;
-            } elseif ($value === 'true') {
-                return true;
-            } elseif ($value === 'false') {
-                return false;
-            } elseif (preg_match('/\./', $value)) {
-                return (float) $value;
-            } else {
-                return (int) $value;
+            $convertedValue = null;
+
+            foreach ($this->parameterResolvers as $parameterResolver) {
+                $convertedValue = $parameterResolver->resolve($value, $routeParameters);
+                if ($convertedValue) {
+                    $value = $convertedValue;
+                    break;
+                }
             }
+
+            if (null === $convertedValue) {
+                $value = $this->cleanValueToString($value);
+            }
+
+            return $value;
         }, $parameters);
 
         return [
-            'serviceId'    => $matches['serviceId'],
+            'serviceId'  => $matches['serviceId'],
             'method'     => $matches['method'],
             'parameters' => $parameters
         ];
+    }
+
+    public function addParameterResolver(ParameterResolver $parameterResolver)
+    {
+        $this->parameterResolvers[] = $parameterResolver;
+
+        return $this;
+    }
+
+    protected function cleanValueToString($value)
+    {
+        $value = trim($value, '"');
+        $value = trim($value, '\'');
+
+        return $value;
     }
 }

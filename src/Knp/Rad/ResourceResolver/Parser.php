@@ -4,5 +4,5 @@ namespace Knp\Rad\ResourceResolver;
 
 interface Parser
 {
-    public function parse($string);
+    public function parse($string, array $routeParameters);
 }
