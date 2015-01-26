@@ -2,6 +2,8 @@
 
 namespace Knp\Rad\ResourceResolver\Parser;
 
+use Knp\Rad\ResourceResolver\Parser\Parser;
+
 class SyntaxParser implements Parser
 {
     public function parse($string)
