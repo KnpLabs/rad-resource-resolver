@@ -10,10 +10,8 @@ class FloatResolver implements ParameterResolver
     {
         if (!preg_match('/.*["\']+.*/', $string)) {
             if (preg_match('/^\d+\.\d+$/', $string)) {
-                return (float) $string;
+                return floatval($string);
             }
         }
-
-        return;
     }
 }

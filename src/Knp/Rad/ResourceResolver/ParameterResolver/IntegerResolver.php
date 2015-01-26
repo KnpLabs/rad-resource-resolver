@@ -10,10 +10,8 @@ class IntegerResolver implements ParameterResolver
     {
         if (!preg_match('/.*["\']+.*/', $string)) {
             if (preg_match('/^[0-9]+$/', $string)) {
-                return (int) $string;
+                return intval($string);
             }
         }
-
-        return;
     }
 }

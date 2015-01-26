@@ -10,11 +10,9 @@ class BooleanResolver implements ParameterResolver
     {
         switch ($string) {
             case 'true':
-                return true;
             case 'TRUE':
                 return true;
             case 'false':
-                return false;
             case 'FALSE':
                 return false;
             default:
