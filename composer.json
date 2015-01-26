@@ -1,0 +1,29 @@
+{
+    "name": "knplabs/rad-resource-resolver",
+    "description": "A routing resource resolver based on conventions",
+    "authors": [
+        {
+            "name": "KNP Labs",
+            "email": "hello@knplabs.com"
+        }
+    ],
+    "require": {
+        "symfony/routing": "~2.4",
+        "symfony/http-foundation": "~2.4",
+        "symfony/http-kernel": "~2.4",
+        "symfony/dependency-injection": "~2.4"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "~2.1@dev"
+    },
+    "minimum-stability": "dev",
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "src"
+        }
+    },
+    "license": "MIT"
+}
