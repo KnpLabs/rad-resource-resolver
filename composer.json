@@ -1,6 +1,7 @@
 {
     "name": "knplabs/rad-resource-resolver",
     "description": "A routing resource resolver based on conventions",
+    "license": "MIT",
     "authors": [
         {
             "name": "KNP Labs",
@@ -16,14 +17,12 @@
     "require-dev": {
         "phpspec/phpspec": "~2.1@dev"
     },
-    "minimum-stability": "dev",
-    "config": {
-        "bin-dir": "bin"
-    },
     "autoload": {
         "psr-0": {
             "": "src"
         }
     },
-    "license": "MIT"
+    "config": {
+        "bin-dir": "bin"
+    }
 }
