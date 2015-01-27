@@ -1,0 +1,40 @@
+services:
+    knp_rad_resource_resolver.parameter_resolver.boolean_resolver:
+        class: Knp\Rad\ResourceResolver\ParameterResolver\BooleanResolver
+        public: false
+        tags:
+            - { name: knp_rad_resource_resolver.parameter_resolver }
+
+    knp_rad_resource_resolver.parameter_resolver.float_resolver:
+        class: Knp\Rad\ResourceResolver\ParameterResolver\FloatResolver
+        public: false
+        tags:
+            - { name: knp_rad_resource_resolver.parameter_resolver }
+
+    knp_rad_resource_resolver.parameter_resolver.integer_resolver:
+        class: Knp\Rad\ResourceResolver\ParameterResolver\IntegerResolver
+        public: false
+        tags:
+            - { name: knp_rad_resource_resolver.parameter_resolver }
+
+    knp_rad_resource_resolver.parameter_resolver.route_attribute_resolver:
+        class: Knp\Rad\ResourceResolver\ParameterResolver\RouteAttributeResolver
+        public: false
+        tags:
+            - { name: knp_rad_resource_resolver.parameter_resolver }
+
+    knp_rad_resource_resolver.parser.syntax_parser:
+        class: Knp\Rad\ResourceResolver\Parser\SyntaxParser
+        public: false
+
+    knp_rad_resource_resolver.resource_resolver:
+        class: Knp\Rad\ResourceResolver\ResourceResolver
+        public: false
+        arguments: [@service_container]
+
+    knp_rad_resource_resolver.event_listener.resources_listener:
+        class: Knp\Rad\ResourceResolver\ResourcesListener
+        public: false
+        arguments: [@knp_rad_resource_resolver.syntax_parser, @knp_rad_resource_resolver.resource_resolver]
+        tags: 
+            - { name: kernel.event_listener, event: kernel.controller, method: resolveResources }
