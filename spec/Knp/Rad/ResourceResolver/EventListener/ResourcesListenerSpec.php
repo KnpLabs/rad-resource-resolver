@@ -43,7 +43,7 @@ class ResourcesListenerSpec extends ObjectBehavior
         ];
 
         $parameterBag->get('_resources')->willReturn($resources);
-        $parameterBag->get('parameters')->willReturn(['id' => 210]);
+        $parameterBag->all()->willReturn(['id' => 210]);
 
         $parser->parse($firstPath, ['id' => 210])->willReturn([
             'serviceId'  => '@app_user_repository',
