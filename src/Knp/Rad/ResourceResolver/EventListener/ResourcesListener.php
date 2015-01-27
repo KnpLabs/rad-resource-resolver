@@ -23,7 +23,7 @@ class ResourcesListener
         $resources = $request->attributes->get('_resources');
 
         foreach ($resources as $resourceKey => $resourceSyntax) {
-            $path = $this->parser->parse($resourceSyntax, $request->attributes->get('parameters'));
+            $path = $this->parser->parse($resourceSyntax, $request->attributes->all());
             $resource = $this
                 ->resolver
                 ->resolveResource(
