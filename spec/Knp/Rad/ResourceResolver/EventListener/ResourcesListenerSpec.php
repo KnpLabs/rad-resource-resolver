@@ -7,7 +7,7 @@ use Prophecy\Argument;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Knp\Rad\ResourceResolver\Parser\Parser;
+use Knp\Rad\ResourceResolver\Parser;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Knp\Rad\ResourceResolver\ResourceResolver;
 
@@ -43,25 +43,26 @@ class ResourcesListenerSpec extends ObjectBehavior
         ];
 
         $parameterBag->get('_resources')->willReturn($resources);
+        $parameterBag->get('parameters')->willReturn(['id' => 210]);
 
-        $parser->parse($firstPath)->willReturn([
-            'serviceId'  => '@myService',
+        $parser->parse($firstPath, ['id' => 210])->willReturn([
+            'serviceId'  => '@app_user_repository',
             'method'     => 'myMethod',
-            'parameters' => [1, 'Test']
+            'parameters' => ["myFirstParameter", true]
         ]);
-        $parser->parse($secondPath)->willReturn([
-            'serviceId'  => '@myService',
+        $parser->parse($secondPath, ['id' => 210])->willReturn([
+            'serviceId'  => '@app_article_repository',
             'method'     => 'myMethod',
-            'parameters' => [2, 'Test2']
+            'parameters' => ['foo', 12]
         ]);
 
         $resolver
-            ->resolveResource('@myService', 'myMethod', [1, 'Test'])
+            ->resolveResource('@app_user_repository', 'myMethod', ["myFirstParameter", true])
             ->willReturn($genericEvent1)
         ;
 
         $resolver
-            ->resolveResource('@myService', 'myMethod', [2, 'Test2'])
+            ->resolveResource('@app_article_repository', 'myMethod', ['foo', 12])
             ->willReturn($genericEvent2)
         ;
 
