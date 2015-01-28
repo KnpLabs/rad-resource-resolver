@@ -10,12 +10,18 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Knp\Rad\ResourceResolver\Parser;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Knp\Rad\ResourceResolver\ResourceResolver;
+use Knp\Rad\ResourceResolver\ParameterCaster;
 
 class ResourcesListenerSpec extends ObjectBehavior
 {
-    function let(Parser $parser, ResourceResolver $resolver)
-    {
-        $this->beConstructedWith($parser, $resolver);
+    function let(
+        ResourceResolver $resolver,
+        Parser $customSyntaxParser,
+        ParameterCaster $variableCaster
+    ) {
+        $this->beConstructedWith($resolver);
+        $this->addParser($customSyntaxParser);
+        $this->addParameterCaster($variableCaster);
     }
 
     function it_is_initializable()
@@ -29,50 +35,54 @@ class ResourcesListenerSpec extends ObjectBehavior
         ParameterBag $parameterBag,
         GenericEvent $genericEvent1,
         GenericEvent $genericEvent2,
-        $parser,
-        $resolver
+        $resolver,
+        $customSyntaxParser,
+        $variableCaster
     ) {
-        $request->attributes = $parameterBag;
         $event->getRequest()->willReturn($request);
-        $firstPath  = '@app_user_repository::myMethod("myFirstParameter", true)';
-        $secondPath = '@app_article_repository::myMethod("foo", 12)';
+        $request->attributes = $parameterBag;
+        $customPath  = '@app_user_repository::myMethod("myFirstParameter", true)';
+        $yamlArray = [
+            'service'   => 'app_article_repository',
+            'method'    => 'myMethod',
+            'arguments' => ['foo', '$id']
+        ];
 
         $resources = [
-            'user'    => $firstPath,
-            'article' => $secondPath
+            'user'    => $customPath,
+            'article' => $yamlArray
         ];
 
         $parameterBag->get('_resources')->willReturn($resources);
-        $parameterBag->all()->willReturn(['id' => 210]);
 
-        $parser->parse($firstPath, ['id' => 210])->willReturn([
-            'serviceId'  => '@app_user_repository',
-            'method'     => 'myMethod',
-            'parameters' => ["myFirstParameter", true]
+        $customSyntaxParser->supports($customPath)->willReturn(true);
+        $customSyntaxParser->parse($customPath)->willReturn([
+            'service'   => 'app_user_repository',
+            'method'    => 'myMethod',
+            'arguments' => ['myFirstParameter']
         ]);
-        $parser->parse($secondPath, ['id' => 210])->willReturn([
-            'serviceId'  => '@app_article_repository',
-            'method'     => 'myMethod',
-            'parameters' => ['foo', 12]
-        ]);
+
 
         $resolver
-            ->resolveResource('@app_user_repository', 'myMethod', ["myFirstParameter", true])
+            ->resolveResource('app_user_repository', 'myMethod', ['myFirstParameter'])
             ->willReturn($genericEvent1)
         ;
 
+        $parameterBag->set('user', $genericEvent1)->shouldBeCalled();
+
+        $customSyntaxParser->supports($yamlArray)->willReturn(false);
+
+        $variableCaster->supports('myFirstParameter')->willReturn(false);
+        $variableCaster->supports('foo')->willReturn(false);
+        $variableCaster->supports('$id')->willReturn(true);
+        $variableCaster->cast('$id')->willReturn(240);
+
         $resolver
-            ->resolveResource('@app_article_repository', 'myMethod', ['foo', 12])
+            ->resolveResource('app_article_repository', 'myMethod', ['foo', 240])
             ->willReturn($genericEvent2)
         ;
 
-        $parameterBag->set('user', $genericEvent1)->shouldBeCalled();
         $parameterBag->set('article', $genericEvent2)->shouldBeCalled();
-
-        $resources = [
-            'user'    => $genericEvent1,
-            'article' => $genericEvent2
-        ];
 
         $this->resolveResources($event);
     }
