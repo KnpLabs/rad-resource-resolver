@@ -5,6 +5,7 @@ branches:
     only: [master]
 
 before_script:
+    - sudo composer self-update
     - composer update --prefer-source --dev
 
 script:
