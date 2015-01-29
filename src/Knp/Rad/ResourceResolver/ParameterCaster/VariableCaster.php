@@ -26,9 +26,9 @@ class VariableCaster implements ParameterCaster
         foreach ($routeParameters as $routeParameter => $value) {
             if (substr($string, 1) === $routeParameter) {
                 return $value;
-            } else {
-                return $string;
             }
         }
+
+        return $string;
     }
 }
