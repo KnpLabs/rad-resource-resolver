@@ -26,7 +26,7 @@ class ResourcesListener
 
         $resources = [];
         foreach ($request->attributes->get('_resources') as $resourceKey => $resourceValue) {
-            $resourceValue = $this->parse($resourceValue) ?: $resourceValue;
+            $resourceValue           = $this->parse($resourceValue) ?: $resourceValue;
             $resources[$resourceKey] = $resourceValue;
         }
 
@@ -67,20 +67,25 @@ class ResourcesListener
         return $this;
     }
 
+    /**
+     * @return null|array
+     */
     protected function parse($resourceDetails)
     {
         foreach ($this->parsers as $parser) {
-            if ($parser->supports($resourceDetails)) {
+            if (true === $parser->supports($resourceDetails)) {
                 return $parser->parse($resourceDetails);
             }
         }
     }
 
+    /**
+     * @return mixed
+     */
     protected function castParameter($parameter)
     {
         foreach ($this->parameterCasters as $parameterCaster) {
-            var_dump($parameter);
-            if ($parameterCaster->supports($parameter)) {
+            if (true === $parameterCaster->supports($parameter)) {
                 return $parameterCaster->cast($parameter);
             }
         }
