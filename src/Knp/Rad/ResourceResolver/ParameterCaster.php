@@ -2,8 +2,8 @@
 
 namespace Knp\Rad\ResourceResolver;
 
-interface Parser
+interface ParameterCaster
 {
     public function supports($string);
-    public function parse($string);
+    public function cast($string);
 }

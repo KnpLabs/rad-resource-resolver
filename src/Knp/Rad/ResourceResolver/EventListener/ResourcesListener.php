@@ -5,31 +5,45 @@ namespace Knp\Rad\ResourceResolver\EventListener;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Knp\Rad\ResourceResolver\Parser;
 use Knp\Rad\ResourceResolver\ResourceResolver;
+use Knp\Rad\ResourceResolver\ParameterCaster;
 
 class ResourcesListener
 {
-    private $parser;
+    private $parsers;
     private $resolver;
+    private $parameterCasters;
 
-    public function __construct(Parser $parser, ResourceResolver $resolver)
+    public function __construct(ResourceResolver $resolver)
     {
-        $this->parser   = $parser;
-        $this->resolver = $resolver;
+        $this->resolver         = $resolver;
+        $this->parsers          = [];
+        $this->parameterCasters = [];
     }
 
     public function resolveResources(FilterControllerEvent $event)
     {
         $request = $event->getRequest();
-        $resources = $request->attributes->get('_resources');
 
-        foreach ($resources as $resourceKey => $resourceSyntax) {
-            $path = $this->parser->parse($resourceSyntax, $request->attributes->all());
+        $resources = [];
+        foreach ($request->attributes->get('_resources') as $resourceKey => $resourceValue) {
+            $resourceValue = $this->parse($resourceValue) ?: $resourceValue;
+            $resources[$resourceKey] = $resourceValue;
+        }
+
+        foreach ($resources as $resourceKey => $resourceDetails) {
+            $parameters = [];
+
+            foreach ($resourceDetails['arguments'] as $parameter) {
+                $parameter = $this->castParameter($parameter)?: $parameter;
+                $parameters[] = $parameter;
+            }
+
             $resource = $this
                 ->resolver
                 ->resolveResource(
-                    $path['serviceId'],
-                    $path['method'],
-                    $path['parameters']
+                    $resourceDetails['service'],
+                    $resourceDetails['method'],
+                    $parameters
                 )
             ;
 
@@ -37,5 +51,38 @@ class ResourcesListener
         }
 
         return $event;
+    }
+
+    public function addParser(Parser $parser)
+    {
+        $this->parsers[] = $parser;
+
+        return $this;
+    }
+
+    public function addParameterCaster(ParameterCaster $parameterCaster)
+    {
+        $this->parameterCasters[] = $parameterCaster;
+
+        return $this;
+    }
+
+    protected function parse($resourceDetails)
+    {
+        foreach ($this->parsers as $parser) {
+            if ($parser->supports($resourceDetails)) {
+                return $parser->parse($resourceDetails);
+            }
+        }
+    }
+
+    protected function castParameter($parameter)
+    {
+        foreach ($this->parameterCasters as $parameterCaster) {
+            var_dump($parameter);
+            if ($parameterCaster->supports($parameter)) {
+                return $parameterCaster->cast($parameter);
+            }
+        }
     }
 }
