@@ -44,6 +44,6 @@ class VariableCasterSpec extends ObjectBehavior
         $this->cast('$foo')->shouldReturn(18098);
         $this->cast('$bar')->shouldReturn(true);
         $this->cast('$xyz')->shouldReturn('value');
-        $this->cast('$test')->shouldReturn(null);
+        $this->cast('$test')->shouldReturn('$test');
     }
 }

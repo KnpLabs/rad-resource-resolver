@@ -1,0 +1,12 @@
+language: php
+php: 5.5
+
+branches:
+    only: [master]
+
+before_script:
+    - composer selfupdate
+    - composer update --prefer-source --dev
+
+script:
+    - bin/phpspec run -fpretty
