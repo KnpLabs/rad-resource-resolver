@@ -18,7 +18,7 @@ class ServiceCaster
      */
     public function supports($string)
     {
-        return 1 === preg_match('/^@\w+/', $string);
+        return 1 === preg_match('/^@(\w|\.)+/', $string);
     }
 
     /**
