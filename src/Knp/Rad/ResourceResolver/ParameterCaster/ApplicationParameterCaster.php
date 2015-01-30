@@ -25,10 +25,10 @@ class ApplicationParameterCaster
      */
     public function cast($string)
     {
-        try {
+        if (true === $this->container->hasParameter($string)) {
             return $this->container->getParameter($string);
-        } catch (InvalidArgumentException $exception) {
-            return $string;
         }
+
+        return $string;
     }
 }

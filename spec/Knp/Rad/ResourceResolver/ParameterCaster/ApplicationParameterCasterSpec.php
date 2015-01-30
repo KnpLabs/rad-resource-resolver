@@ -32,6 +32,12 @@ class ApplicationParameterCasterSpec extends ObjectBehavior
     function it_casts_application_parameter_string_in_string(
         $container
     ) {
+        $container->hasParameter('%my_integer_parameter%')->willReturn(true);
+        $container->hasParameter('%my_string_parameter%')->willReturn(true);
+        $container->hasParameter('%my_bool_parameter%')->willReturn(true);
+        $container->hasParameter('%my_array_parameter%')->willReturn(true);
+        $container->hasParameter('%my_inexistant_parameter%')->willReturn(false);
+
         $container->getParameter('%my_integer_parameter%')->willReturn(3847);
         $container->getParameter('%my_string_parameter%')->willReturn('foo');
         $container->getParameter('%my_bool_parameter%')->willReturn(false);
