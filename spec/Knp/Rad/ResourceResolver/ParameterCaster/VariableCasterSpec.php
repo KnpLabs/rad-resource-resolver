@@ -21,7 +21,7 @@ class VariableCasterSpec extends ObjectBehavior
         $this->shouldHaveType('Knp\Rad\ResourceResolver\ParameterCaster\VariableCaster');
     }
 
-    function it_casts_variable_string_in_string($request, ParameterBag $attributes)
+    function it_supports_variable_strings()
     {
         $this->supports('12309')->shouldReturn(false);
         $this->supports(123509)->shouldReturn(false);
@@ -29,7 +29,10 @@ class VariableCasterSpec extends ObjectBehavior
         $this->supports('$unprst')->shouldReturn(true);
         $this->supports('$09erst')->shouldReturn(false);
         $this->supports('nrustenrute')->shouldReturn(false);  
+    }
 
+    function it_casts_variable_string_in_string($request, ParameterBag $attributes)
+    {
         $request->attributes = $attributes;
 
         $attributes
