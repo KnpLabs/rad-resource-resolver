@@ -39,6 +39,6 @@ class ServiceCaster implements ParameterCaster
     {
         $service = $this->container->get($string, ContainerInterface::NULL_ON_INVALID_REFERENCE);
 
-    return null !== $service ? $service : $string;
-}
+        return null !== $service ? $service : $string;
+    }
 }
