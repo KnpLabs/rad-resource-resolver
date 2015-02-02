@@ -2,18 +2,27 @@
 
 namespace Knp\Rad\ResourceResolver\ParameterCaster;
 
+use Knp\Rad\ResourceResolver\ParameterCaster;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ServiceCaster
+class ServiceCaster implements ParameterCaster
 {
+    /**
+     * @var ContainerInterface $container
+     */
     private $container;
 
+    /**
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
     /**
+     * @param string $string
+     *
      * @return bool
      */
     public function supports($string)
@@ -22,6 +31,8 @@ class ServiceCaster
     }
 
     /**
+     * @param string $string
+     *
      * @return mixed
      */
     public function cast($string)

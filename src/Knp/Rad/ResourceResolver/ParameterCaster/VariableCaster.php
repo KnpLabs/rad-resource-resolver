@@ -7,21 +7,33 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class VariableCaster implements ParameterCaster
 {
-    private $request;
+    /**
+     * @var RequestStack $requestStack
+     */
+    private $requestStack;
 
+    /**
+     * @param RequestStack $requestStack
+     */
     public function __construct(RequestStack $requestStack)
     {
-        $this->request = $requestStack->getCurrentRequest();
+        $this->requestStack = $requestStack;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function supports($string)
     {
         return 1 === preg_match('/^\$[a-zA-Z_]+/', $string);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function cast($string)
     {
-        $routeParameters = $this->request->attributes->get('_route_params');
+        $routeParameters = $this->getRequest()->attributes->get('_route_params');
 
         foreach ($routeParameters as $routeParameter => $value) {
             if (substr($string, 1) === $routeParameter) {
@@ -30,5 +42,13 @@ class VariableCaster implements ParameterCaster
         }
 
         return $string;
+    }
+
+    /**
+     * @return Request
+     */
+    private function getRequest()
+    {
+        return $this->requestStack->getCurrentRequest();
     }
 }
