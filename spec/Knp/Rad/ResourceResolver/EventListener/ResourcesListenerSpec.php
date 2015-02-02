@@ -2,15 +2,15 @@
 
 namespace spec\Knp\Rad\ResourceResolver\EventListener;
 
+use Knp\Rad\ResourceResolver\ParameterCaster;
+use Knp\Rad\ResourceResolver\Parser;
+use Knp\Rad\ResourceResolver\ResourceResolver;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Knp\Rad\ResourceResolver\Parser;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Knp\Rad\ResourceResolver\ResourceResolver;
-use Knp\Rad\ResourceResolver\ParameterCaster;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 class ResourcesListenerSpec extends ObjectBehavior
 {
@@ -53,7 +53,7 @@ class ResourcesListenerSpec extends ObjectBehavior
             'article' => $yamlArray
         ];
 
-        $parameterBag->get('_resources')->willReturn($resources);
+        $parameterBag->get('_resources', [])->willReturn($resources);
 
         $customSyntaxParser->supports($customPath)->willReturn(true);
         $customSyntaxParser->parse($customPath)->willReturn([
@@ -83,6 +83,21 @@ class ResourcesListenerSpec extends ObjectBehavior
         ;
 
         $parameterBag->set('article', $genericEvent2)->shouldBeCalled();
+
+        $this->resolveResources($event);
+    }
+
+    function it_does_nothing_if_there_is_no_resource_to_resolve(
+        FilterControllerEvent $event,
+        Request $request,
+        ParameterBag $parameterBag,
+        $resolver
+    ) {
+        $event->getRequest()->willReturn($request);
+        $request->attributes = $parameterBag;
+        $parameterBag->get('_resources', [])->willReturn([]);
+
+        $resolver->resolveResource(Argument::cetera())->shouldNotBeCalled();
 
         $this->resolveResources($event);
     }

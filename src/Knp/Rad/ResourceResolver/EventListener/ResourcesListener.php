@@ -2,10 +2,10 @@
 
 namespace Knp\Rad\ResourceResolver\EventListener;
 
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Knp\Rad\ResourceResolver\ParameterCaster;
 use Knp\Rad\ResourceResolver\Parser;
 use Knp\Rad\ResourceResolver\ResourceResolver;
-use Knp\Rad\ResourceResolver\ParameterCaster;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 class ResourcesListener
 {
@@ -25,7 +25,7 @@ class ResourcesListener
         $request = $event->getRequest();
 
         $resources = [];
-        foreach ($request->attributes->get('_resources') as $resourceKey => $resourceValue) {
+        foreach ($request->attributes->get('_resources', []) as $resourceKey => $resourceValue) {
             $resourceValue           = $this->parse($resourceValue) ?: $resourceValue;
             $resources[$resourceKey] = $resourceValue;
         }
