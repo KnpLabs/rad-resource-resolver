@@ -21,19 +21,6 @@ class ResourceResolver
             throw new \Exception(sprintf('The container could not find the service %s', $serviceId));
         }
 
-        try {
-            $resource = call_user_func_array([$service, $methodName], $arguments);        
-        } catch (\Exception $e) {
-            throw new \Exception(
-                sprintf(
-                    'Something went wrong when calling %s::%s(%s)',
-                    $serviceId,
-                    $methodName,
-                    implode(', ', $arguments)
-                )
-            );
-        }
-
-        return $resource;
+        return call_user_func_array([$service, $methodName], $arguments);
     }
 }
