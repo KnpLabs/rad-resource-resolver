@@ -33,7 +33,7 @@ class ServiceCaster implements ParameterCaster
     /**
      * @param string $string
      *
-     * @return mixed
+     * @return object|string
      */
     public function cast($string)
     {

@@ -45,7 +45,7 @@ class VariableCaster implements ParameterCaster
     }
 
     /**
-     * @return Request
+     * @return \Symfony\Component\HttpFoundation\Request|null
      */
     private function getRequest()
     {

@@ -24,7 +24,7 @@ In a yaml routing file, it could look like this :
         path: /countries/{countryId}/cities/{citySlug}/buildings
         defaults:
             _resources:
-                buildings: @app.building.repository::findByCountryAndCityAndActivity($countryId, $citySlug, "School")
+                buildings:
                     service: app.building.repository
                     method: findByCountryAndCityAndActivity
                     arguments: [$countryId, $citySlug, "School"]
@@ -55,6 +55,13 @@ Just install it with `Composer` using `composer require "knplabs/rad-resource-re
         );
 
 You're done.
+
+##How can I hook resource resolution ?
+
+There is two events : 
+
+    - knp_rad_resource_resolver.before_resource_resolved: dispatched before the resolution. You can set the resource before the resolution.
+    - knp_rad_resource_resolver.resource_resource_resolved: dispatched after the resolution.
 
 ## License
 This project is published under MIT License. Feel free to contribute.
