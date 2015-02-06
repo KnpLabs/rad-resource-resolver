@@ -2,12 +2,14 @@
 
 namespace Knp\Rad\ResourceResolver\EventListener;
 
+use Knp\Rad\ResourceResolver\CasterContainer;
 use Knp\Rad\ResourceResolver\ParameterCaster;
 use Knp\Rad\ResourceResolver\Parser;
+use Knp\Rad\ResourceResolver\ParserContainer;
 use Knp\Rad\ResourceResolver\ResourceResolver;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
-class ResourcesListener
+class ResourcesListener implements CasterContainer, ParserContainer
 {
     private $parsers;
     private $resolver;
@@ -53,6 +55,9 @@ class ResourcesListener
         return $event;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function addParser(Parser $parser)
     {
         $this->parsers[] = $parser;
@@ -60,6 +65,9 @@ class ResourcesListener
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function addParameterCaster(ParameterCaster $parameterCaster)
     {
         $this->parameterCasters[] = $parameterCaster;

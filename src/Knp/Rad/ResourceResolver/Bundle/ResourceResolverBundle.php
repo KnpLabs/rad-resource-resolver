@@ -2,10 +2,11 @@
 
 namespace Knp\Rad\ResourceResolver\Bundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Knp\Rad\ResourceResolver\DependencyInjection\Compiler\ParameterCasterRegistrationPass;
+use Knp\Rad\ResourceResolver\DependencyInjection\Compiler\ParserRegistrationPass;
 use Knp\Rad\ResourceResolver\DependencyInjection\ResourceResolverExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Knp\Rad\ResourceResolver\DependencyInjection\Compiler\ResourcesListenerPass;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class ResourceResolverBundle extends Bundle
 {
@@ -14,7 +15,8 @@ class ResourceResolverBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new ResourcesListenerPass);
+        $container->addCompilerPass(new ParameterCasterRegistrationPass);
+        $container->addCompilerPass(new ParserRegistrationPass);
     }
 
     /**
