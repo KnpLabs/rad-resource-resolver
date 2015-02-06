@@ -5,12 +5,16 @@ namespace Knp\Rad\ResourceResolver;
 interface ParameterCaster
 {
     /**
-     * @return bool
+     * @param mixed $value
+     *
+     * @return boolean
      */
-    public function supports($string);
+    public function supports($value);
 
     /**
+     * @param mixed $value
+     *
      * @return mixed
      */
-    public function cast($string);
+    public function cast($value);
 }

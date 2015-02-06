@@ -23,25 +23,29 @@ class VariableCaster implements ParameterCaster
     /**
      * {@inheritdoc}
      */
-    public function supports($string)
+    public function supports($value)
     {
-        return 1 === preg_match('/^\$[a-zA-Z_]+/', $string);
+        if (false === is_string($value)) {
+            return false;
+        }
+
+        return 1 === preg_match('/^\$[a-zA-Z_]+/', $value);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function cast($string)
+    public function cast($value)
     {
         $routeParameters = $this->getRequest()->attributes->get('_route_params');
 
-        foreach ($routeParameters as $routeParameter => $value) {
-            if (substr($string, 1) === $routeParameter) {
-                return $value;
+        foreach ($routeParameters as $routeParameter => $routevalue) {
+            if (substr($value, 1) === $routeParameter) {
+                return $routevalue;
             }
         }
 
-        return $string;
+        return $value;
     }
 
     /**

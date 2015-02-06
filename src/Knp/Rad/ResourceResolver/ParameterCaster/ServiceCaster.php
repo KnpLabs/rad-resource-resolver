@@ -21,24 +21,24 @@ class ServiceCaster implements ParameterCaster
     }
 
     /**
-     * @param string $string
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function supports($string)
+    public function supports($value)
     {
-        return 1 === preg_match('/^@(\w|\.)+/', $string);
+        if (false === is_string($value)) {
+            return false;
+        }
+
+        return 1 === preg_match('/^@(\w|\.)+/', $value);
     }
 
     /**
-     * @param string $string
-     *
-     * @return object|string
+     * {@inheritdoc}
      */
-    public function cast($string)
+    public function cast($value)
     {
-        $service = $this->container->get($string, ContainerInterface::NULL_ON_INVALID_REFERENCE);
+        $service = $this->container->get($value, ContainerInterface::NULL_ON_INVALID_REFERENCE);
 
-        return null !== $service ? $service : $string;
+        return null !== $service ? $service : $value;
     }
 }
