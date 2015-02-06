@@ -60,8 +60,8 @@ You're done.
 
 There is two events : 
 
-    - knp_rad_resource_resolver.before_resource_resolved: dispatched before the resolution. You can set the resource before the resolution.
-    - knp_rad_resource_resolver.resource_resource_resolved: dispatched after the resolution.
+    - knp_rad_resource_resolver.before_resource_resolved:  dispatched before the resolution. You can set the resource before the resolution.
+    - knp_rad_resource_resolver.resource_resolved:         dispatched after the resolution.
 
 ## License
 This project is published under MIT License. Feel free to contribute.
