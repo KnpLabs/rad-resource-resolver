@@ -2,8 +2,8 @@
 
 namespace Knp\Rad\ResourceResolver;
 
-use Knp\Rad\ResourceResolver\Event\ResourceEvent\BeforeResourceResolvedEvent;
-use Knp\Rad\ResourceResolver\Event\ResourceEvent\ResourceResolvedEvent;
+use Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent\BeforeResourceResolvedEvent;
+use Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent\ResourceResolvedEvent;
 use Knp\Rad\ResourceResolver\Events;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;

@@ -29,6 +29,7 @@ public function registerBundles()
 
 In a yaml routing file, it could look like this :
 
+```yaml
     users_show:
         path: /users/{id}
         defaults:
@@ -38,7 +39,9 @@ In a yaml routing file, it could look like this :
                     method: find
                     arguments: [$id]
     # This will automatically resolve the resource to give you a $user object in your request attributes
+```
         
+```yaml
     countries_cities_buildings_index:
         path: /countries/{countryId}/cities/{citySlug}/buildings
         defaults:
@@ -48,6 +51,7 @@ In a yaml routing file, it could look like this :
                     method: findByCountryAndCityAndActivity
                     arguments: [$countryId, $citySlug, "School"]
     # You will have a $buildings variable in your request attributes
+```
 
 Every `key` under `_resources` will be return as a `$key` converted value in your request attributes.
 
@@ -75,12 +79,20 @@ Just install it with `Composer` using `composer require "knplabs/rad-resource-re
 
 You're done.
 
+#Events
+
+All events are listed [here](./src/Knp/Rad/ResourceResolver/Events.php).
+
 ##How can I hook resource resolution ?
 
 There is two events : 
 
     - knp_rad_resource_resolver.before_resource_resolved:  dispatched before the resolution. You can set the resource before the resolution.
     - knp_rad_resource_resolver.resource_resolved:         dispatched after the resolution.
+
+##How can I get all resolved resources ?
+
+There is a service named `knp_rad_resource_resolver.resource_container.resource_container` where you can get all resolved resources. You can also listen to the event `knp_rad_resource_resolver.resource.added` and be notified when a resource is added to the container.
 
 ## License
 This project is published under MIT License. Feel free to contribute.

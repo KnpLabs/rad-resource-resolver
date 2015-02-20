@@ -39,8 +39,8 @@ class ResourceResolverSpec extends ObjectBehavior
     {
         $this->beConstructedWith($container, $dispatcher);
 
-        $dispatcher->dispatch(Events::BEFORE_RESOURCE_RESOLVED, Argument::type('Knp\Rad\ResourceResolver\Event\ResourceEvent\BeforeResourceResolvedEvent'))->shouldBeCalled();
-        $dispatcher->dispatch(Events::RESOURCE_RESOLVED, Argument::type('Knp\Rad\ResourceResolver\Event\ResourceEvent\ResourceResolvedEvent'))->shouldBeCalled();
+        $dispatcher->dispatch(Events::BEFORE_RESOURCE_RESOLVED, Argument::type('Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent\BeforeResourceResolvedEvent'))->shouldBeCalled();
+        $dispatcher->dispatch(Events::RESOURCE_RESOLVED, Argument::type('Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent\ResourceResolvedEvent'))->shouldBeCalled();
 
         $this->resolveResource('@app.my.route', 'setOption', ['"myFirstParameter"', true]);
     }
@@ -51,14 +51,14 @@ class ResourceResolverSpec extends ObjectBehavior
         $this->beConstructedWith($container, $dispatcher);
 
         $dispatcher
-            ->dispatch(Events::BEFORE_RESOURCE_RESOLVED, Argument::type('Knp\Rad\ResourceResolver\Event\ResourceEvent\BeforeResourceResolvedEvent'))
+            ->dispatch(Events::BEFORE_RESOURCE_RESOLVED, Argument::type('Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent\BeforeResourceResolvedEvent'))
             ->shouldBeCalled()
             ->will(function ($args) use ($result) {
                 list($name, $event) = $args;
                 $event->setResource($result);
             })
         ;
-        $dispatcher->dispatch(Events::RESOURCE_RESOLVED, Argument::type('Knp\Rad\ResourceResolver\Event\ResourceEvent\ResourceResolvedEvent'))->shouldBeCalled();
+        $dispatcher->dispatch(Events::RESOURCE_RESOLVED, Argument::type('Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent\ResourceResolvedEvent'))->shouldBeCalled();
         $route->setOption(Argument::cetera())->shouldNotBeCalled();
 
         $this->resolveResource('@app.my.route', 'setOption', ['"myFirstParameter"', true])->shouldReturn($result);
