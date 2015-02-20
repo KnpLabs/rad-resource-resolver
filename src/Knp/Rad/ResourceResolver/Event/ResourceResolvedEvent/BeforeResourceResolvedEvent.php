@@ -1,11 +1,11 @@
 <?php
 
-namespace Knp\Rad\ResourceResolver\Event\ResourceEvent;
+namespace Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent;
 
-use Knp\Rad\ResourceResolver\Event\ResourceEvent;
+use Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent as EventInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-final class BeforeResourceResolvedEvent extends Event implements ResourceEvent
+final class BeforeResourceResolvedEvent extends Event implements EventInterface
 {
 
     /**

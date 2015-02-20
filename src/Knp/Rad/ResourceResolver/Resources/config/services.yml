@@ -3,6 +3,7 @@ services:
         class: Knp\Rad\ResourceResolver\EventListener\ResourcesListener
         arguments:
             - @knp_rad_resource_resolver.resource_resolver
+            - @knp_rad_resource_resolver.resource_container.dispatcher_proxy_container
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: resolveResources }
             - { name: knp_rad_resource_resolver.parameter_caster_container }
@@ -31,9 +32,20 @@ services:
         tags:
             - { name: knp_rad_resource_resolver.parameter_caster }
 
+    knp_rad_resource_resolver.resource_container.dispatcher_proxy_container:
+        class: Knp\Rad\ResourceResolver\ResourceContainer\DispatcherProxyContainer
+        public: false
+        arguments:
+            - @knp_rad_resource_resolver.resource_container.resource_container
+            - @event_dispatcher
+
+    knp_rad_resource_resolver.resource_container.resource_container:
+        class: Knp\Rad\ResourceResolver\ResourceContainer\ResourceContainer
+
     knp_rad_resource_resolver.resource_resolver:
         class: Knp\Rad\ResourceResolver\ResourceResolver
         public: false
         arguments:
             - @service_container
             - @event_dispatcher
+

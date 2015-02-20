@@ -5,27 +5,17 @@ namespace Knp\Rad\ResourceResolver\Event;
 interface ResourceEvent
 {
     /**
+     * @return string
+     */
+    public function getName();
+
+    /**
      * @return mixed
      */
     public function getResource();
 
     /**
-     * @return string
+     * @return Knp\Rad\ResourceResolver\ResourceContainer
      */
-    public function getServiceId();
-
-    /**
-     * @return object
-     */
-    public function getService();
-
-    /**
-     * @return string
-     */
-    public function getMethod();
-
-    /**
-     * @return array
-     */
-    public function getArguments();
+    public function getContainer();
 }

@@ -6,18 +6,21 @@ use Knp\Rad\ResourceResolver\CasterContainer;
 use Knp\Rad\ResourceResolver\ParameterCaster;
 use Knp\Rad\ResourceResolver\Parser;
 use Knp\Rad\ResourceResolver\ParserContainer;
+use Knp\Rad\ResourceResolver\ResourceContainer;
 use Knp\Rad\ResourceResolver\ResourceResolver;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 class ResourcesListener implements CasterContainer, ParserContainer
 {
     private $parsers;
+    private $container;
     private $resolver;
     private $parameterCasters;
 
-    public function __construct(ResourceResolver $resolver)
+    public function __construct(ResourceResolver $resolver, ResourceContainer $container)
     {
         $this->resolver         = $resolver;
+        $this->container        = $container;
         $this->parsers          = [];
         $this->parameterCasters = [];
     }
@@ -50,6 +53,8 @@ class ResourcesListener implements CasterContainer, ParserContainer
             ;
 
             $request->attributes->set($resourceKey, $resource);
+
+            $this->container->addResource($resourceKey, $resource);
         }
 
         return $event;

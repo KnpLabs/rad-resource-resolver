@@ -4,6 +4,7 @@ namespace spec\Knp\Rad\ResourceResolver\EventListener;
 
 use Knp\Rad\ResourceResolver\ParameterCaster;
 use Knp\Rad\ResourceResolver\Parser;
+use Knp\Rad\ResourceResolver\ResourceContainer;
 use Knp\Rad\ResourceResolver\ResourceResolver;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -17,9 +18,10 @@ class ResourcesListenerSpec extends ObjectBehavior
     function let(
         ResourceResolver $resolver,
         Parser $customSyntaxParser,
-        ParameterCaster $variableCaster
+        ParameterCaster $variableCaster,
+        ResourceContainer $container
     ) {
-        $this->beConstructedWith($resolver);
+        $this->beConstructedWith($resolver, $container);
         $this->addParser($customSyntaxParser);
         $this->addParameterCaster($variableCaster);
     }
@@ -37,7 +39,8 @@ class ResourcesListenerSpec extends ObjectBehavior
         GenericEvent $genericEvent2,
         $resolver,
         $customSyntaxParser,
-        $variableCaster
+        $variableCaster,
+        $container
     ) {
         $event->getRequest()->willReturn($request);
         $request->attributes = $parameterBag;
@@ -83,6 +86,9 @@ class ResourcesListenerSpec extends ObjectBehavior
         ;
 
         $parameterBag->set('article', $genericEvent2)->shouldBeCalled();
+
+        $container->addResource('article', $genericEvent2)->shouldBeCalled();
+        $container->addResource('user', $genericEvent1)->shouldBeCalled();
 
         $this->resolveResources($event);
     }
