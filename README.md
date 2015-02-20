@@ -1,11 +1,30 @@
 # Knp Rad Resource Resolver
-
 ## Why using it?
 Tired of doing the same things again and again in your controllers, like transforming a URL value in an object?
 Don't want to use ParamConverter Annotations?
 
 This Resource Resolver is for you.
 
+## Installation
+
+With composer :
+
+```bash
+$ composer require knplabs/rad-resource-resolver
+```
+
+If you are using symfony2 you can update your `app/AppKernel.php` file:
+
+```php
+public function registerBundles()
+{
+    $bundles = array(
+        // bundles here ...
+        new Knp\Rad\ResourceResolver\Bundle\ResourceResolverBundle(),
+    );
+}
+```
+ 
 ## How to use it?
 
 In a yaml routing file, it could look like this :
