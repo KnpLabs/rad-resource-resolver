@@ -55,6 +55,12 @@ In a yaml routing file, it could look like this :
 
 Every `key` under `_resources` will be return as a `$key` converted value in your request attributes.
 
+## Available resource resolving arguments
+
+- URL variables: you have to use the `$` prefix. For example, if your URL is `/products/{products}/` you can access to `product` value by using `$product`.
+- Services: you can use the `@` prefix (ex: @doctrine)
+- Previously resolved resources: you can use the `&` prefix (ex: `&user` will return the `user` resource)
+
 ## How does it work?
 
 A `ResourcesListener` listens to `kernel.controller` event and resolves automatically all resources in `_resources`.
@@ -69,13 +75,15 @@ The tag to add a `Parser` is `knp_rad_resource_resolver.parser`.
 
 Just install it with `Composer` using `composer require "knplabs/rad-resource-resolver: dev-master"` and declare the bundle in your `AppKernel.php` file like this:
 
-
+```php
     public function registerBundles()
     {
         $bundles = array(
             // Other bundles
             new Knp\Rad\ResourceResolver\Bundle\ResourceResolverBundle(),
         );
+    }
+```
 
 You're done.
 
