@@ -9,6 +9,7 @@ use Knp\Rad\ResourceResolver\ParserContainer;
 use Knp\Rad\ResourceResolver\ResourceContainer;
 use Knp\Rad\ResourceResolver\ResourceResolver;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ResourcesListener implements CasterContainer, ParserContainer
 {
@@ -38,11 +39,10 @@ class ResourcesListener implements CasterContainer, ParserContainer
         foreach ($resources as $resourceKey => $resourceDetails) {
             $parameters = [];
 
-            if (isset($resourceDetails['arguments'])) {
-                foreach ($resourceDetails['arguments'] as $parameter) {
-                    $parameter = $this->castParameter($parameter) ?: $parameter;
-                    $parameters[] = $parameter;
-                }
+            $resourceDetails = array_merge(['required' => true, 'arguments' => []], $resourceDetails);
+            foreach ($resourceDetails['arguments'] as $parameter) {
+                $parameter = $this->castParameter($parameter) ?: $parameter;
+                $parameters[] = $parameter;
             }
 
             $resource = $this
@@ -53,6 +53,10 @@ class ResourcesListener implements CasterContainer, ParserContainer
                     $parameters
                 )
             ;
+
+            if (false !== $resourceDetails['required'] && null === $resource) {
+                throw new NotFoundHttpException(sprintf('The resource %s could not be found', $resourceKey));
+            }
 
             $request->attributes->set($resourceKey, $resource);
 

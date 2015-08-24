@@ -107,4 +107,79 @@ class ResourcesListenerSpec extends ObjectBehavior
 
         $this->resolveResources($event);
     }
+
+    function it_throws_a_not_found_exception_if_the_resource_could_not_be_found(
+        FilterControllerEvent $event,
+        Request $request,
+        ParameterBag $parameterBag,
+        $resolver,
+        $customSyntaxParser,
+        $variableCaster,
+        $container
+    ) {
+        $event->getRequest()->willReturn($request);
+        $request->attributes = $parameterBag;
+        $customPath  = '@app_user_repository::myMethod("myFirstParameter")';
+
+        $resources = [
+            'user' => $customPath,
+        ];
+
+        $parameterBag->get('_resources', [])->willReturn($resources);
+
+        $customSyntaxParser->supports($customPath)->willReturn(true);
+        $customSyntaxParser->parse($customPath)->willReturn([
+            'service'   => 'app_user_repository',
+            'method'    => 'myMethod',
+            'arguments' => ['myFirstParameter']
+        ]);
+
+        $resolver
+            ->resolveResource('app_user_repository', 'myMethod', ['myFirstParameter'])
+            ->willReturn(null)
+        ;
+
+        $this
+            ->shouldThrow('Symfony\Component\HttpKernel\Exception\NotFoundHttpException')
+            ->during('resolveResources', [$event])
+        ;
+    }
+
+    function it_does_not_throw_exception_if_required_is_set_to_false(
+        FilterControllerEvent $event,
+        Request $request,
+        ParameterBag $parameterBag,
+        $resolver,
+        $customSyntaxParser,
+        $variableCaster,
+        $container
+    ) {
+        $event->getRequest()->willReturn($request);
+        $request->attributes = $parameterBag;
+        $customPath  = '@app_user_repository::myMethod("myFirstParameter")';
+
+        $resources = [
+            'user' => $customPath,
+        ];
+
+        $parameterBag->get('_resources', [])->willReturn($resources);
+
+        $customSyntaxParser->supports($customPath)->willReturn(true);
+        $customSyntaxParser->parse($customPath)->willReturn([
+            'service'   => 'app_user_repository',
+            'method'    => 'myMethod',
+            'arguments' => ['myFirstParameter'],
+            'required'  => false,
+        ]);
+
+        $resolver
+            ->resolveResource('app_user_repository', 'myMethod', ['myFirstParameter'])
+            ->willReturn(null)
+        ;
+
+        $parameterBag->set('user', null)->shouldBeCalled();
+        $container->addResource('user', null)->shouldBeCalled();
+
+        $this->resolveResources($event);
+    }
 }
