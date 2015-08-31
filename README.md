@@ -55,6 +55,19 @@ In a yaml routing file, it could look like this :
 
 Every `key` under `_resources` will be return as a `$key` converted value in your request attributes.
 
+## Optional Resources
+
+By default, the Rad Resource Resolver throws a `Symfony\Component\HttpKernel\Exception\NotFoundHttpException` if the resource was not found. You can override this behavior by adding the `required` option to false:
+
+```yaml
+    _resources:
+        buildings:
+            service: app.building.repository
+            method: findByCountryAndCityAndActivity
+            arguments: [$countryId, $citySlug, "School"]
+            required: false
+```
+
 ## Available resource resolving arguments
 
 - URL variables: you have to use the `$` prefix. For example, if your URL is `/products/{products}/` you can access to `product` value by using `$product`.
