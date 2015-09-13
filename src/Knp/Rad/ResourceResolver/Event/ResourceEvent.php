@@ -2,20 +2,59 @@
 
 namespace Knp\Rad\ResourceResolver\Event;
 
-interface ResourceEvent
+use Knp\Rad\ResourceResolver\Resource\Container;
+use Symfony\Component\EventDispatcher\Event;
+
+final class ResourceEvent extends Event
 {
     /**
-     * @return string
+     * @var string $resourceName
      */
-    public function getName();
+    private $resourceName;
 
     /**
-     * @return mixed
+     * @var mixed $resource
      */
-    public function getResource();
+    private $resource;
 
     /**
-     * @return Knp\Rad\ResourceResolver\ResourceContainer
+     * @var Container $container
      */
-    public function getContainer();
+    private $container;
+
+    /**
+     * @param string    $resourceName
+     * @param mixed     $resource
+     * @param Container $container
+     */
+    public function __construct($resourceName, $resource, Container $container)
+    {
+        $this->resourceName = $resourceName;
+        $this->resource     = $resource;
+        $this->container    = $container;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return $this->resourceName;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
 }

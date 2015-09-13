@@ -1,0 +1,30 @@
+parameters:
+    knp_rad_resource_resolver.parser.container.class: Knp\Rad\ResourceResolver\Parser\Container
+    knp_rad_resource_resolver.parser.service_based.explicit_config_parser.class: Knp\Rad\ResourceResolver\Parser\ServiceBsed\ExplicitConfigParser
+    knp_rad_resource_resolver.parser.service_based.implicit_config_parser.class: Knp\Rad\ResourceResolver\Parser\ServiceBased\ImplicitConfigParser
+    knp_rad_resource_resolver.parser.request_based.request_parser.class: Knp\Rad\ResourceResolver\Parser\RequestBased\RequestConfigParser
+
+services:
+    knp_rad_resource_resolver.parser.container:
+        class: %knp_rad_resource_resolver.parser.container.class%
+
+    knp_rad_resource_resolver.parser.service_based.explicit_config_parser:
+        class: %knp_rad_resource_resolver.parser.service_based.explicit_config_parser.class%
+        arguments:
+            - @container
+            - @knp_rad_resource_resolver.caster.container
+        tags:
+            - { name: knp_rad_resource_resolver.parser }
+
+    knp_rad_resource_resolver.parser.service_based.implicit_config_parser:
+        class: %knp_rad_resource_resolver.parser.service_based.implicit_config_parser.class%
+        arguments:
+            - @container
+            - @knp_rad_resource_resolver.caster.container
+        tags:
+            - { name: knp_rad_resource_resolver.parser }
+
+    knp_rad_resource_resolver.parser.request_based.request_config_parser:
+        class: %knp_rad_resource_resolver.parser.request_based.request_parser.class%
+        tags:
+            - { name: knp_rad_resource_resolver.parser }

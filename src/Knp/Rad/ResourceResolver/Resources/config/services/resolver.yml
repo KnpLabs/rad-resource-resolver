@@ -1,0 +1,13 @@
+parameters:
+    knp_rad_resource_resolver.resolver.container.class: Knp\Rad\ResourceResolver\Resolver\Container
+    knp_rad_resource_resolver.resolver.callable_resolver.class: Knp\Rad\ResourceResolver\Resolver\CallableResolver
+    knp_rad_resource_resolver.resolver.traceable_resolver_decorator.class: Knp\Rad\ResourceResolver\Resolver\TraceableResolverDecorator
+
+services:
+    knp_rad_resource_resolver.resolver.container:
+        class: %knp_rad_resource_resolver.resolver.container.class%
+
+    knp_rad_resource_resolver.resolve.callable_resolver:
+        class: %knp_rad_resource_resolver.resolver.callable_resolver.class%
+        tags:
+            - { name: knp_rad_resource_resolver.resolver }

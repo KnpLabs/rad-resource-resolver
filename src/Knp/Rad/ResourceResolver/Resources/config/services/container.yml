@@ -1,0 +1,7 @@
+parameters:
+    knp_rad_resource_resolver.resource.container.bag.class: Knp\Rad\ResourceResolver\Resource\Container\Bag
+    knp_rad_resource_resolver.resource.container.traceable_container_decorator.class: Knp\Rad\ResourceResolver\Resource\Container\TraceableContainerDecorator
+
+services:
+    knp_rad_resource_resolver.resource.container:
+        class: %knp_rad_resource_resolver.resource.container.bag.class%
