@@ -55,6 +55,16 @@ In a yaml routing file, it could look like this :
 
 Every `key` under `_resources` will be return as a `$key` converted value in your request attributes.
 
+However, you can use a more concise way to express your resources configuration :
+
+```yaml
+    product_show:
+        path: /product/{slug}
+        defaults:
+            _resources:
+                product: [ "my.product.repository:findBySlug", [ $slug ] ]
+```
+
 ## Optional Resources
 
 By default, the Rad Resource Resolver throws a `Symfony\Component\HttpKernel\Exception\NotFoundHttpException` if the resource was not found. You can override this behavior by adding the `required` option to false:
@@ -83,22 +93,6 @@ This means you can easily add your own `ParameterCasters` and `Parsers` to chang
 
 To add your own `ParameterCaster`, just tag it with `knp_rad_resource_resolver.parameter_caster`.
 The tag to add a `Parser` is `knp_rad_resource_resolver.parser`.
-
-## How to include it in my project?
-
-Just install it with `Composer` using `composer require "knplabs/rad-resource-resolver: dev-master"` and declare the bundle in your `AppKernel.php` file like this:
-
-```php
-    public function registerBundles()
-    {
-        $bundles = array(
-            // Other bundles
-            new Knp\Rad\ResourceResolver\Bundle\ResourceResolverBundle(),
-        );
-    }
-```
-
-You're done.
 
 #Events
 
