@@ -1,8 +1,8 @@
 <?php
 
-namespace Knp\Rad\ResourceResolver;
+namespace Knp\Rad\ResourceResolver\Resource;
 
-interface ResourceContainer extends \ArrayAccess
+interface Container extends \ArrayAccess
 {
     /**
      * @return array
@@ -13,6 +13,7 @@ interface ResourceContainer extends \ArrayAccess
      * @param string $key
      *
      * @return mixed
+     *
      * @throw \DomainException if resource doesn't exists
      */
     public function getResource($key);
@@ -28,14 +29,15 @@ interface ResourceContainer extends \ArrayAccess
      * @param string $key
      * @param mixed $resource
      *
-     * @return ResourceContainer
+     * @return Container
      */
     public function addResource($key, $resource);
 
     /**
      * @param string $key
      *
-     * @return ResourceContainer
+     * @return Container
+     *
      * @throw \DomainException if resource doesn't exists
      */
     public function removeResource($key);
