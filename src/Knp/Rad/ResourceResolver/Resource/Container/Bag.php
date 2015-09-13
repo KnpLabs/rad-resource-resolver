@@ -1,10 +1,10 @@
 <?php
 
-namespace Knp\Rad\ResourceResolver\ResourceContainer;
+namespace Knp\Rad\ResourceResolver\Resource\Container;
 
-use Knp\Rad\ResourceResolver\ResourceContainer as ContainerInterface;
+use Knp\Rad\ResourceResolver\Resource\Container as ContainerInterface;
 
-class ResourceContainer implements ContainerInterface
+class Bag implements ContainerInterface
 {
     /**
      * @var array $resources

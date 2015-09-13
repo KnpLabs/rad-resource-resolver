@@ -2,111 +2,93 @@
 
 namespace Knp\Rad\ResourceResolver\EventListener;
 
-use Knp\Rad\ResourceResolver\CasterContainer;
-use Knp\Rad\ResourceResolver\ParameterCaster;
+use Knp\Rad\ResourceResolver\Caster;
 use Knp\Rad\ResourceResolver\Parser;
-use Knp\Rad\ResourceResolver\ParserContainer;
-use Knp\Rad\ResourceResolver\ResourceContainer;
-use Knp\Rad\ResourceResolver\ResourceResolver;
+use Knp\Rad\ResourceResolver\Resolver;
+use Knp\Rad\ResourceResolver\Resource\Container;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ResourcesListener implements CasterContainer, ParserContainer
+final class ResourcesListener
 {
-    private $parsers;
-    private $container;
-    private $resolver;
-    private $parameterCasters;
+    /**
+     * @var Parser
+     */
+    private $parser;
 
-    public function __construct(ResourceResolver $resolver, ResourceContainer $container)
+    /**
+     * @var Caster\Container
+     */
+    private $caster;
+
+    /**
+     * @var Resolver
+     */
+    private $resolver;
+
+    /**
+     * @var Container
+     */
+    private $container;
+
+    /**
+     * @param Parser           $parser
+     * @param Caster\Container $caster
+     * @param Resolver         $resolver
+     * @param Container        $container
+     */
+    public function __construct(Parser $parser, Caster\Container $caster, Resolver $resolver, Container $container)
     {
-        $this->resolver         = $resolver;
-        $this->container        = $container;
-        $this->parsers          = [];
-        $this->parameterCasters = [];
+        $this->parser    = $parser;
+        $this->caster    = $caster;
+        $this->resolver  = $resolver;
+        $this->container = $container;
     }
 
+    /**
+     * @param FilterControllerEvent $event
+     *
+     * @return FilterControllerEvent
+     */
     public function resolveResources(FilterControllerEvent $event)
     {
-        $request = $event->getRequest();
+        $request        = $event->getRequest();
+        $configurations = $this->getResourcesConfigurations($request);
 
-        $resources = [];
-        foreach ($request->attributes->get('_resources', []) as $resourceKey => $resourceValue) {
-            $resourceValue           = $this->parse($resourceValue) ?: $resourceValue;
-            $resources[$resourceKey] = $resourceValue;
-        }
+        foreach ($configurations as $name => $configuration) {
+            $configuration->resolveArguments($this->caster);
+            $resource = $this->resolver->resolve($configuration);
 
-        foreach ($resources as $resourceKey => $resourceDetails) {
-            $parameters = [];
-
-            $resourceDetails = array_merge(['required' => true, 'arguments' => []], $resourceDetails);
-            foreach ($resourceDetails['arguments'] as $parameter) {
-                $parameter = $this->castParameter($parameter) ?: $parameter;
-                $parameters[] = $parameter;
+            if ($configuration->isRequired() && null === $resource) {
+                throw new NotFoundHttpException(sprintf('The resource "%s" could not be found.', $name));
             }
 
-            $resource = $this
-                ->resolver
-                ->resolveResource(
-                    $resourceDetails['service'],
-                    $resourceDetails['method'],
-                    $parameters
-                )
-            ;
+            $request->attributes->set($name, $resource);
 
-            if (false !== $resourceDetails['required'] && null === $resource) {
-                throw new NotFoundHttpException(sprintf('The resource %s could not be found', $resourceKey));
-            }
-
-            $request->attributes->set($resourceKey, $resource);
-
-            $this->container->addResource($resourceKey, $resource);
+            $this->container->addResource($name, $resource);
         }
 
         return $event;
     }
 
     /**
-     * {@inheritdoc}
+     * @param Request $request
+     *
+     * @return \Knp\Rad\ResourceResolver\Resource[]
      */
-    public function addParser(Parser $parser)
+    private function getResourcesConfigurations(Request $request)
     {
-        $this->parsers[] = $parser;
+        $resources = [];
 
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addParameterCaster(ParameterCaster $parameterCaster)
-    {
-        $this->parameterCasters[] = $parameterCaster;
-
-        return $this;
-    }
-
-    /**
-     * @return null|array
-     */
-    protected function parse($resourceDetails)
-    {
-        foreach ($this->parsers as $parser) {
-            if (true === $parser->supports($resourceDetails)) {
-                return $parser->parse($resourceDetails);
+        foreach ($request->attributes->get('_resources', []) as $name => $plainConfiguration) {
+            if (!$this->parser->supports($plainConfiguration)) {
+                throw new \RuntimeException('The resource config parser does not supports this type of configuration.');
             }
-        }
-    }
 
-    /**
-     * @return mixed
-     */
-    protected function castParameter($parameter)
-    {
-        foreach ($this->parameterCasters as $parameterCaster) {
-            if (true === $parameterCaster->supports($parameter)) {
-                return $parameterCaster->cast($parameter);
-            }
+            $resources[$name] = $this->parser->parse($name, $plainConfiguration);
         }
+
+        return $resources;
     }
 }

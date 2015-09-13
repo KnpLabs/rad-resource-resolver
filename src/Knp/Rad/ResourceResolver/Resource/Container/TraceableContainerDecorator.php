@@ -1,13 +1,13 @@
 <?php
 
-namespace Knp\Rad\ResourceResolver\ResourceContainer;
+namespace Knp\Rad\ResourceResolver\Resource\Container;
 
-use Knp\Rad\ResourceResolver\Event\ResourceEvent\ResourceEvent;
+use Knp\Rad\ResourceResolver\Event\ResourceEvent;
 use Knp\Rad\ResourceResolver\Events;
-use Knp\Rad\ResourceResolver\ResourceContainer as ContainerInterface;
+use Knp\Rad\ResourceResolver\Resource\Container as ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class DispatcherProxyContainer implements ContainerInterface
+class TraceableContainerDecorator implements ContainerInterface
 {
     /**
      * @var ContainerInterface $wrapped
@@ -19,6 +19,10 @@ class DispatcherProxyContainer implements ContainerInterface
      */
     private $dispatcher;
 
+    /**
+     * @param ContainerInterface       $wrapped
+     * @param EventDispatcherInterface $dispatcher
+     */
     public function __construct(ContainerInterface $wrapped, EventDispatcherInterface $dispatcher)
     {
         $this->wrapped    = $wrapped;

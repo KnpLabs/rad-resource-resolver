@@ -1,6 +1,6 @@
 {
     "name": "knplabs/rad-resource-resolver",
-    "description": "A routing resource resolver based on conventions",
+    "description": "An abstraction of routing resource resolution",
     "license": "MIT",
     "authors": [
         {
@@ -9,15 +9,22 @@
         }
     ],
     "require": {
-        "symfony/config": "~2.4",
-        "symfony/dependency-injection": "~2.4",
-        "symfony/event-dispatcher": "~2.4",
-        "symfony/http-foundation": "~2.4",
-        "symfony/http-kernel": "~2.4",
-        "symfony/routing": "~2.4"
+        "php": ">=5.4"
     },
     "require-dev": {
-        "phpspec/phpspec": "~2.1"
+        "phpspec/phpspec": "~2.1",
+        "symfony/http-foundation": "~2.4",
+        "symfony/http-kernel": "~2.4",
+        "symfony/event-dispatcher": "~2.4",
+        "symfony/config": "~2.4",
+        "symfony/dependency-injection": "~2.4"
+    },
+    "suggest": {
+        "symfony/http-foundation": "Provides VariableCaster / RequestConfigParser / ResourcesListener",
+        "symfony/http-kernel": "Provides Bundle / ResourcesListener",
+        "symfony/event-dispatcher": "Provides ResourcesListener",
+        "symfony/config": "Provides Bundle config",
+        "symfony/dependency-injection": "Provides Bundle config"
     },
     "autoload": {
         "psr-0": {

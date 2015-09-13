@@ -5,7 +5,7 @@ namespace Knp\Rad\ResourceResolver\Event;
 use Knp\Rad\ResourceResolver\Resource;
 use Symfony\Component\EventDispatcher\Event;
 
-final class ResourceResolvedEvent extends Event
+final class BeforeResourceResolvedEvent extends Event
 {
     /**
      * @var Resource
@@ -19,12 +19,10 @@ final class ResourceResolvedEvent extends Event
 
     /**
      * @param Resource $configuration
-     * @param mixed    $resource
      */
-    public function __construct(Resource $configuration, $resource)
+    public function __construct(Resource $configuration)
     {
-        $this->configuration = $resource;
-        $this->resource      = $resource;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -33,6 +31,18 @@ final class ResourceResolvedEvent extends Event
     public function getConfiguration()
     {
         return $this->configuration;
+    }
+
+    /***
+     * @param $resource
+     *
+     * @return BeforeResourceResolvedEvent
+     */
+    public function setResource($resource)
+    {
+        $this->resource = $resource;
+
+        return $this;
     }
 
     /**
