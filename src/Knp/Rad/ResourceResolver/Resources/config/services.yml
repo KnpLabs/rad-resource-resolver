@@ -1,3 +1,6 @@
+parameters:
+    knp_rad_resource_resolver.event_listener.resources_listener.priority: 0
+
 services:
     knp_rad_resource_resolver.event_listener.resources_listener:
         class: Knp\Rad\ResourceResolver\EventListener\ResourcesListener
@@ -5,7 +8,7 @@ services:
             - @knp_rad_resource_resolver.resource_resolver
             - @knp_rad_resource_resolver.resource_container.dispatcher_proxy_container
         tags:
-            - { name: kernel.event_listener, event: kernel.controller, method: resolveResources }
+            - { name: kernel.event_listener, event: kernel.controller, method: resolveResources, priority: %knp_rad_resource_resolver.event_listener.resources_listener.priority% }
             - { name: knp_rad_resource_resolver.parameter_caster_container }
             - { name: knp_rad_resource_resolver.parser_container }
 
