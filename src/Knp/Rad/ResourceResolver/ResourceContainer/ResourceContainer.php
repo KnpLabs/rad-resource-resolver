@@ -7,7 +7,7 @@ use Knp\Rad\ResourceResolver\ResourceContainer as ContainerInterface;
 class ResourceContainer implements ContainerInterface
 {
     /**
-     * @var array $resources
+     * @var array
      */
     private $resources;
 

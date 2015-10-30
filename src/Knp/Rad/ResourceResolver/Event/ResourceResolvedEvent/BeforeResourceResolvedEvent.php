@@ -7,29 +7,28 @@ use Symfony\Component\EventDispatcher\Event;
 
 final class BeforeResourceResolvedEvent extends Event implements EventInterface
 {
-
     /**
-     * @var mixed $resource
+     * @var mixed
      */
     private $resource;
 
     /**
-     * @var string $serviceId
+     * @var string
      */
     private $serviceId;
 
     /**
-     * @var object $service
+     * @var object
      */
     private $service;
 
     /**
-     * @var string $method
+     * @var string
      */
     private $method;
 
     /**
-     * @var array $arguments
+     * @var array
      */
     private $arguments;
 
@@ -37,7 +36,7 @@ final class BeforeResourceResolvedEvent extends Event implements EventInterface
      * @param string $serviceId
      * @param object $service
      * @param string $method
-     * @param array $arguments
+     * @param array  $arguments
      */
     public function __construct($serviceId, $service, $method, array $arguments)
     {

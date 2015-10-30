@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class VariableCaster implements ParameterCaster
 {
     /**
-     * @var RequestStack $requestStack
+     * @var RequestStack
      */
     private $requestStack;
 

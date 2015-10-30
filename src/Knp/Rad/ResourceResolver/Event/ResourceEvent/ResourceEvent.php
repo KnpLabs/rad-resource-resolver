@@ -8,23 +8,23 @@ use Symfony\Component\EventDispatcher\Event;
 final class ResourceEvent extends Event
 {
     /**
-     * @var string $resourceName
+     * @var string
      */
     private $resourceName;
 
     /**
-     * @var mixed $resource
+     * @var mixed
      */
     private $resource;
 
     /**
-     * @var ResourceContainer $container
+     * @var ResourceContainer
      */
     private $container;
 
     /**
-     * @param string $resourceName
-     * @param mixed $resource
+     * @param string            $resourceName
+     * @param mixed             $resource
      * @param ResourceContainer $container
      */
     public function __construct($resourceName, $resource, ResourceContainer $container)

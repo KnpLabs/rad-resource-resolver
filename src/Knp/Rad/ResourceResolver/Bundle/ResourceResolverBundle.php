@@ -11,24 +11,23 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class ResourceResolverBundle extends Bundle
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new ParameterCasterRegistrationPass);
-        $container->addCompilerPass(new ParserRegistrationPass);
+        $container->addCompilerPass(new ParameterCasterRegistrationPass());
+        $container->addCompilerPass(new ParserRegistrationPass());
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getContainerExtension()
     {
         if (null === $this->extension) {
-            $this->extension = new ResourceResolverExtension;
+            $this->extension = new ResourceResolverExtension();
         }
 
         return $this->extension;
     }
 }
-
