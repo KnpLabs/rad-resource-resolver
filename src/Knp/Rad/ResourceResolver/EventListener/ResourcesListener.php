@@ -37,9 +37,9 @@ class ResourcesListener implements CasterContainer, ParserContainer
         }
 
         foreach ($resources as $resourceKey => $resourceDetails) {
-            $parameters = [];
+            $resourceDetails = $this->normalizeResourceDetails($resourceDetails);
+            $parameters      = [];
 
-            $resourceDetails = array_merge(['required' => true, 'arguments' => []], $resourceDetails);
             foreach ($resourceDetails['arguments'] as $parameter) {
                 $parameter = $this->castParameter($parameter) ?: $parameter;
                 $parameters[] = $parameter;
@@ -89,7 +89,7 @@ class ResourcesListener implements CasterContainer, ParserContainer
     /**
      * @return null|array
      */
-    protected function parse($resourceDetails)
+    private function parse($resourceDetails)
     {
         foreach ($this->parsers as $parser) {
             if (true === $parser->supports($resourceDetails)) {
@@ -101,12 +101,34 @@ class ResourcesListener implements CasterContainer, ParserContainer
     /**
      * @return mixed
      */
-    protected function castParameter($parameter)
+    private function castParameter($parameter)
     {
         foreach ($this->parameterCasters as $parameterCaster) {
             if (true === $parameterCaster->supports($parameter)) {
                 return $parameterCaster->cast($parameter);
             }
         }
+    }
+
+    private function normalizeResourceDetails($resourceDetails)
+    {
+        if (array_keys($resourceDetails) === array_keys(array_values($resourceDetails))) {
+            if (false === strpos($resourceDetails[0], ':')) {
+                throw new \RuntimeException('The first argument for a resource configuration, when expressed with a numerically indexed array, should be a string containing the service and the method used, seperated by a colon.');
+            } elseif (isset($resourceDetails[1]) && !is_array($resourceDetails[1])) {
+                throw new \RuntimeException('The second argument for a resource configuration, when expressed with a numerically indexed array, should be an array of arguments.');
+            }
+
+            list($service, $method) = explode(':', $resourceDetails[0]);
+
+            return [
+                'service'   => $service,
+                'method'    => $method,
+                'arguments' => isset($resourceDetails[1]) ? $resourceDetails[1] : [],
+                'required'  => isset($resourceDetails[2]) ? boolval($resourceDetails[2]) : true,
+            ];
+        }
+
+        return array_merge(['required' => true, 'arguments' => []], $resourceDetails);
     }
 }

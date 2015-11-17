@@ -37,6 +37,7 @@ class ResourcesListenerSpec extends ObjectBehavior
         ParameterBag $parameterBag,
         GenericEvent $genericEvent1,
         GenericEvent $genericEvent2,
+        GenericEvent $genericEvent3,
         $resolver,
         $customSyntaxParser,
         $variableCaster,
@@ -50,10 +51,18 @@ class ResourcesListenerSpec extends ObjectBehavior
             'method'    => 'myMethod',
             'arguments' => ['foo', '$id']
         ];
+        $concise = ['app_category_repository:myMethod', ['$id'], true];
+        $normalized = [
+            'service'   => 'app_category_repository',
+            'method'    => 'myMethod',
+            'arguments' => ['$id'],
+            'required'  => false,
+        ];
 
         $resources = [
-            'user'    => $customPath,
-            'article' => $yamlArray
+            'user'     => $customPath,
+            'article'  => $yamlArray,
+            'category' => $concise,
         ];
 
         $parameterBag->get('_resources', [])->willReturn($resources);
@@ -87,8 +96,21 @@ class ResourcesListenerSpec extends ObjectBehavior
 
         $parameterBag->set('article', $genericEvent2)->shouldBeCalled();
 
-        $container->addResource('article', $genericEvent2)->shouldBeCalled();
+        $customSyntaxParser->supports($concise)->willReturn(false);
+
+        $variableCaster->supports('$id')->willReturn(true);
+        $variableCaster->cast('$id')->willReturn(240);
+
+        $resolver
+            ->resolveResource('app_category_repository', 'myMethod', [240])
+            ->willReturn($genericEvent3)
+        ;
+
+        $parameterBag->set('category', $genericEvent3)->shouldBeCalled();
+
         $container->addResource('user', $genericEvent1)->shouldBeCalled();
+        $container->addResource('article', $genericEvent2)->shouldBeCalled();
+        $container->addResource('category', $genericEvent3)->shouldBeCalled();
 
         $this->resolveResources($event);
     }
