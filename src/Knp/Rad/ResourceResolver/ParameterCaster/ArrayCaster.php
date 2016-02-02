@@ -8,7 +8,7 @@ use Knp\Rad\ResourceResolver\ParameterCaster;
 class ArrayCaster implements ParameterCaster, CasterContainer
 {
     /**
-     * @var ParameterCaster[] $parameterCasters
+     * @var ParameterCaster[]
      */
     private $parameterCasters;
 

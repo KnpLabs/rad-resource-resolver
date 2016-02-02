@@ -4,7 +4,6 @@ namespace Knp\Rad\ResourceResolver;
 
 use Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent\BeforeResourceResolvedEvent;
 use Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent\ResourceResolvedEvent;
-use Knp\Rad\ResourceResolver\Events;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -12,17 +11,17 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ResourceResolver
 {
     /**
-     * @var ContainerInterface $container
+     * @var ContainerInterface
      */
     private $container;
 
     /**
-     * @var EventDispatcherInterface $dispatcher
+     * @var EventDispatcherInterface
      */
     private $dispatcher;
 
     /**
-     * @param ContainerInterface $container
+     * @param ContainerInterface            $container
      * @param EventDispatcherInterface|null $dispatcher
      */
     public function __construct(ContainerInterface $container, EventDispatcherInterface $dispatcher = null)
@@ -34,7 +33,7 @@ class ResourceResolver
     /**
      * @param string $serviceId
      * @param string $methodName
-     * @param array $arguments
+     * @param array  $arguments
      *
      * @return mixed
      */

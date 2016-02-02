@@ -10,12 +10,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class DispatcherProxyContainer implements ContainerInterface
 {
     /**
-     * @var ContainerInterface $wrapped
+     * @var ContainerInterface
      */
     private $wrapped;
 
     /**
-     * @var EventDispatcherInterface $dispatcher
+     * @var EventDispatcherInterface
      */
     private $dispatcher;
 

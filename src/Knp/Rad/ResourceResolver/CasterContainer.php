@@ -2,8 +2,6 @@
 
 namespace Knp\Rad\ResourceResolver;
 
-use Knp\Rad\ResourceResolver\ParameterCaster;
-
 interface CasterContainer
 {
     /**

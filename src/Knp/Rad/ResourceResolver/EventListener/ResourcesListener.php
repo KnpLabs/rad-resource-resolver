@@ -41,7 +41,7 @@ class ResourcesListener implements CasterContainer, ParserContainer
             $parameters      = [];
 
             foreach ($resourceDetails['arguments'] as $parameter) {
-                $parameter = $this->castParameter($parameter) ?: $parameter;
+                $parameter    = $this->castParameter($parameter) ?: $parameter;
                 $parameters[] = $parameter;
             }
 

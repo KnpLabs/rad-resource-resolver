@@ -20,13 +20,13 @@ interface ResourceContainer extends \ArrayAccess
     /**
      * @param string $key
      *
-     * @return boolean
+     * @return bool
      */
     public function hasResource($key);
 
     /**
      * @param string $key
-     * @param mixed $resource
+     * @param mixed  $resource
      *
      * @return ResourceContainer
      */

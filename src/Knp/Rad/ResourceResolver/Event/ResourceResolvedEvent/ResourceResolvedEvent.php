@@ -3,13 +3,12 @@
 namespace Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent;
 
 use Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent as EventInterface;
-use Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent\BeforeResourceResolvedEvent;
 use Symfony\Component\EventDispatcher\Event;
 
 final class ResourceResolvedEvent extends Event implements EventInterface
 {
     /**
-     * @var BeforeResourceResolvedEvent $event
+     * @var BeforeResourceResolvedEvent
      */
     private $event;
 

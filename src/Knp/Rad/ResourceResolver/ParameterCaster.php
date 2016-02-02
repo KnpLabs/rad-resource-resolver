@@ -7,7 +7,7 @@ interface ParameterCaster
     /**
      * @param mixed $value
      *
-     * @return boolean
+     * @return bool
      */
     public function supports($value);
 

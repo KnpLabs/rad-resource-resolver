@@ -107,7 +107,7 @@ There is two events :
 
 ##How can I get all resolved resources ?
 
-There is a service named `knp_rad_resource_resolver.resource_container.resource_container` where you can get all resolved resources. You can also listen to the event `knp_rad_resource_resolver.resource.added` and be notified when a resource is added to the container.
+There is a service alias named `knp_rad_resource_resolver.resource_container` where you can get all resolved resources. You can also listen to the event `knp_rad_resource_resolver.resource.added` and be notified when a resource is added to the container.
 
 ## License
 This project is published under MIT License. Feel free to contribute.

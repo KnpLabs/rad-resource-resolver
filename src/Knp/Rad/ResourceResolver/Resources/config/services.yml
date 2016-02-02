@@ -6,7 +6,7 @@ services:
         class: Knp\Rad\ResourceResolver\EventListener\ResourcesListener
         arguments:
             - @knp_rad_resource_resolver.resource_resolver
-            - @knp_rad_resource_resolver.resource_container.dispatcher_proxy_container
+            - @knp_rad_resource_resolver.resource_container
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: resolveResources, priority: %knp_rad_resource_resolver.event_listener.resources_listener.priority% }
             - { name: knp_rad_resource_resolver.parameter_caster_container }
@@ -23,7 +23,7 @@ services:
         class: Knp\Rad\ResourceResolver\ParameterCaster\ResourceCaster
         public: false
         arguments:
-            - @knp_rad_resource_resolver.resource_container.resource_container
+            - @knp_rad_resource_resolver.resource_container
         tags:
             - { name: knp_rad_resource_resolver.parameter_caster }
 
@@ -52,6 +52,9 @@ services:
 
     knp_rad_resource_resolver.resource_container.resource_container:
         class: Knp\Rad\ResourceResolver\ResourceContainer\ResourceContainer
+
+    knp_rad_resource_resolver.resource_container:
+        alias: knp_rad_resource_resolver.resource_container.dispatcher_proxy_container
 
     knp_rad_resource_resolver.resource_resolver:
         class: Knp\Rad\ResourceResolver\ResourceResolver
