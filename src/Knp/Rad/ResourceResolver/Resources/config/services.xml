@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="knp_rad_resource_resolver.event_listener.resources_listener.priority">0</parameter>
+    </parameters>
+
+    <services>
+        <service id="knp_rad_resource_resolver.event_listener.resources_listener" class="Knp\Rad\ResourceResolver\EventListener\ResourcesListener">
+            <argument type="service" id="knp_rad_resource_resolver.resource_resolver"/>
+            <argument type="service" id="knp_rad_resource_resolver.resource_container" />
+
+            <tag name="kernel.event_listener" event="kernel.controller" method="resolveResources" priority="%knp_rad_resource_resolver.event_listener.resources_listener.priority%" />
+            <tag name="knp_rad_resource_resolver.parameter_caster_container" />
+            <tag name="knp_rad_resource_resolver.parser_container" />
+        </service>
+
+        <service id="knp_rad_resource_resolver.parameter_caster.array_caster" class="Knp\Rad\ResourceResolver\ParameterCaster\ArrayCaster" public="false">
+            <tag name="knp_rad_resource_resolver.parameter_caster" />
+            <tag name="knp_rad_resource_resolver.parameter_caster_container" />
+        </service>
+
+        <service id="knp_rad_resource_resolver.parameter_caster.resource_caster" class="Knp\Rad\ResourceResolver\ParameterCaster\ResourceCaster" public="false">
+            <argument type="service" id="knp_rad_resource_resolver.resource_container"/>
+
+            <tag name="knp_rad_resource_resolver.parameter_caster" />
+        </service>
+
+        <service id="knp_rad_resource_resolver.parameter_caster.service_caster" class="Knp\Rad\ResourceResolver\ParameterCaster\ServiceCaster" public="false">
+            <argument type="service" id="service_container" />
+
+            <tag name="knp_rad_resource_resolver.parameter_caster" />
+        </service>
+
+        <service id="knp_rad_resource_resolver.parameter_caster.variable_caster" class="Knp\Rad\ResourceResolver\ParameterCaster\VariableCaster" public="false">
+            <argument type="service" id="request_stack" />
+
+            <tag name="knp_rad_resource_resolver.parameter_caster" />
+        </service>
+
+        <service id="knp_rad_resource_resolver.resource_container.dispatcher_proxy_container" class="Knp\Rad\ResourceResolver\ResourceContainer\DispatcherProxyContainer" public="false">
+            <argument type="service" id="knp_rad_resource_resolver.resource_container.resource_container" />
+            <argument type="service" id="event_dispatcher" />
+        </service>
+
+        <service id="knp_rad_resource_resolver.resource_container.resource_container" class="Knp\Rad\ResourceResolver\ResourceContainer\ResourceContainer">
+        </service>
+
+        <service id="knp_rad_resource_resolver.resource_container" alias="knp_rad_resource_resolver.resource_container.dispatcher_proxy_container">
+        </service>
+
+        <service id="knp_rad_resource_resolver.resource_resolver" class="Knp\Rad\ResourceResolver\ResourceResolver">
+            <argument type="service" id="service_container" />
+            <argument type="service" id="event_dispatcher" />
+        </service>
+    </services>
+</container>

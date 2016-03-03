@@ -1,4 +1,6 @@
 # Knp Rad Resource Resolver
+[![Build Status](https://scrutinizer-ci.com/g/KnpLabs/rad-resource-resolver/badges/build.png?b=master)](https://scrutinizer-ci.com/g/KnpLabs/rad-resource-resolver/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/KnpLabs/rad-resource-resolver/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/KnpLabs/rad-resource-resolver/?branch=master)
 ## Why using it?
 Tired of doing the same things again and again in your controllers, like transforming a URL value in an object?
 Don't want to use ParamConverter Annotations?

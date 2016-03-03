@@ -125,7 +125,7 @@ class ResourcesListener implements CasterContainer, ParserContainer
                 'service'   => $service,
                 'method'    => $method,
                 'arguments' => isset($resourceDetails[1]) ? $resourceDetails[1] : [],
-                'required'  => isset($resourceDetails[2]) ? boolval($resourceDetails[2]) : true,
+                'required'  => isset($resourceDetails[2]) ? (bool) $resourceDetails[2] : true,
             ];
         }
 
