@@ -3,11 +3,10 @@
 namespace spec\Knp\Rad\ResourceResolver\ParameterCaster;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\DataCollector\RequestDataCollector;
 use Symfony\Component\HttpKernel\EventListener\DumpListener;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ServiceCasterSpec extends ObjectBehavior
 {
@@ -38,22 +37,22 @@ class ServiceCasterSpec extends ObjectBehavior
         $container
     ) {
         $container
-            ->get('@request_stack', ContainerInterface::NULL_ON_INVALID_REFERENCE)
+            ->get('request_stack', ContainerInterface::NULL_ON_INVALID_REFERENCE)
             ->willReturn($requestStack)
         ;
 
         $container
-            ->get('@data_collector.request', ContainerInterface::NULL_ON_INVALID_REFERENCE)
+            ->get('data_collector.request', ContainerInterface::NULL_ON_INVALID_REFERENCE)
             ->willReturn($requestDataCollector)
         ;
 
         $container
-            ->get('@debug.dump_listener', ContainerInterface::NULL_ON_INVALID_REFERENCE)
+            ->get('debug.dump_listener', ContainerInterface::NULL_ON_INVALID_REFERENCE)
             ->willReturn($dumpListener)
         ;
 
         $container
-            ->get('@foo_bar', ContainerInterface::NULL_ON_INVALID_REFERENCE)
+            ->get('foo_bar', ContainerInterface::NULL_ON_INVALID_REFERENCE)
             ->willReturn('@foo_bar')
         ;
 

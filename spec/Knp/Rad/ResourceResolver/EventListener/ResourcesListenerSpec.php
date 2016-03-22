@@ -45,13 +45,13 @@ class ResourcesListenerSpec extends ObjectBehavior
     ) {
         $event->getRequest()->willReturn($request);
         $request->attributes = $parameterBag;
-        $customPath  = '@app_user_repository::myMethod("myFirstParameter", true)';
-        $yamlArray = [
+        $customPath          = '@app_user_repository::myMethod("myFirstParameter", true)';
+        $yamlArray           = [
             'service'   => 'app_article_repository',
             'method'    => 'myMethod',
-            'arguments' => ['foo', '$id']
+            'arguments' => ['foo', '$id'],
         ];
-        $concise = ['app_category_repository:myMethod', ['$id'], true];
+        $concise    = ['app_category_repository:myMethod', ['$id'], true];
         $normalized = [
             'service'   => 'app_category_repository',
             'method'    => 'myMethod',
@@ -71,9 +71,8 @@ class ResourcesListenerSpec extends ObjectBehavior
         $customSyntaxParser->parse($customPath)->willReturn([
             'service'   => 'app_user_repository',
             'method'    => 'myMethod',
-            'arguments' => ['myFirstParameter']
+            'arguments' => ['myFirstParameter'],
         ]);
-
 
         $resolver
             ->resolveResource('app_user_repository', 'myMethod', ['myFirstParameter'])
@@ -141,7 +140,7 @@ class ResourcesListenerSpec extends ObjectBehavior
     ) {
         $event->getRequest()->willReturn($request);
         $request->attributes = $parameterBag;
-        $customPath  = '@app_user_repository::myMethod("myFirstParameter")';
+        $customPath          = '@app_user_repository::myMethod("myFirstParameter")';
 
         $resources = [
             'user' => $customPath,
@@ -153,7 +152,7 @@ class ResourcesListenerSpec extends ObjectBehavior
         $customSyntaxParser->parse($customPath)->willReturn([
             'service'   => 'app_user_repository',
             'method'    => 'myMethod',
-            'arguments' => ['myFirstParameter']
+            'arguments' => ['myFirstParameter'],
         ]);
 
         $resolver
@@ -178,7 +177,7 @@ class ResourcesListenerSpec extends ObjectBehavior
     ) {
         $event->getRequest()->willReturn($request);
         $request->attributes = $parameterBag;
-        $customPath  = '@app_user_repository::myMethod("myFirstParameter")';
+        $customPath          = '@app_user_repository::myMethod("myFirstParameter")';
 
         $resources = [
             'user' => $customPath,

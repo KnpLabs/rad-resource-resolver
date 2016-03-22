@@ -3,10 +3,9 @@
 namespace spec\Knp\Rad\ResourceResolver\ParameterCaster;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class VariableCasterSpec extends ObjectBehavior
 {
@@ -28,7 +27,7 @@ class VariableCasterSpec extends ObjectBehavior
         $this->supports(false)->shouldReturn(false);
         $this->supports('$unprst')->shouldReturn(true);
         $this->supports('$09erst')->shouldReturn(false);
-        $this->supports('nrustenrute')->shouldReturn(false);  
+        $this->supports('nrustenrute')->shouldReturn(false);
     }
 
     function it_casts_variable_string_in_string($request, ParameterBag $attributes)
@@ -40,7 +39,7 @@ class VariableCasterSpec extends ObjectBehavior
             ->willReturn([
                 'foo' => 18098,
                 'bar' => true,
-                'xyz' => 'value'
+                'xyz' => 'value',
             ])
         ;
 

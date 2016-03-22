@@ -4,7 +4,6 @@ namespace spec\Knp\Rad\ResourceResolver\ParameterCaster;
 
 use Knp\Rad\ResourceResolver\ResourceContainer;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ResourceCasterSpec extends ObjectBehavior
 {
@@ -28,7 +27,8 @@ class ResourceCasterSpec extends ObjectBehavior
         $this->supports('&')->shouldReturn(false);
     }
 
-    function it_casts_a_resource_string_in_resource($resource, $resource2, $container) {
+    function it_casts_a_resource_string_in_resource($resource, $resource2, $container)
+    {
         $container
             ->getResource('my_resource')
             ->willReturn($resource)
