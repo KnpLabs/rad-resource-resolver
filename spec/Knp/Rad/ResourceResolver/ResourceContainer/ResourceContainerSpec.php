@@ -3,7 +3,6 @@
 namespace spec\Knp\Rad\ResourceResolver\ResourceContainer;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ResourceContainerSpec extends ObjectBehavior
 {
@@ -65,7 +64,7 @@ class ResourceContainerSpec extends ObjectBehavior
         $this->hasResource('resource2')->shouldReturn(false);
     }
 
-    public function it_fails_when_an_unexisting_resource_is_asked()
+    function it_fails_when_an_unexisting_resource_is_asked()
     {
         $this
             ->shouldThrow(new \DomainException('Resource "no" not found, "resource1", "resource3" available.'))

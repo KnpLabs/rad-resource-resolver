@@ -18,6 +18,7 @@
         "symfony/routing": "~2.8 || ~3.0"
     },
     "require-dev": {
+        "pedrotroller/php-cs-custom-fixer": "~1.2.1",
         "phpspec/phpspec": "~2.4"
     },
     "autoload": {

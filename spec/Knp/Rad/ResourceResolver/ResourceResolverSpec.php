@@ -5,9 +5,7 @@ namespace spec\Knp\Rad\ResourceResolver;
 use Knp\Rad\ResourceResolver\Events;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 
@@ -19,7 +17,6 @@ class ResourceResolverSpec extends ObjectBehavior
 
         $container->get('@app.my.route')->willReturn($route);
         $route->setOption('"myFirstParameter"', true)->willReturn($reference);
-
     }
 
     function it_is_initializable()
