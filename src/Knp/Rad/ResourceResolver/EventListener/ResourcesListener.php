@@ -8,6 +8,7 @@ use Knp\Rad\ResourceResolver\Parser;
 use Knp\Rad\ResourceResolver\ParserContainer;
 use Knp\Rad\ResourceResolver\ResourceContainer;
 use Knp\Rad\ResourceResolver\ResourceResolver;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -17,6 +18,11 @@ class ResourcesListener implements CasterContainer, ParserContainer
     private $container;
     private $resolver;
     private $parameterCasters;
+    private $exceptions = [
+        Response::HTTP_NOT_FOUND    => '\Symfony\Component\HttpKernel\Exception\NotFoundHttpException',
+        Response::HTTP_UNAUTHORIZED => '\Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException',
+        Response::HTTP_FORBIDDEN    => '\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException',
+    ];
 
     public function __construct(ResourceResolver $resolver, ResourceContainer $container)
     {
@@ -28,9 +34,9 @@ class ResourcesListener implements CasterContainer, ParserContainer
 
     public function resolveResources(FilterControllerEvent $event)
     {
-        $request = $event->getRequest();
-
+        $request   = $event->getRequest();
         $resources = [];
+
         foreach ($request->attributes->get('_resources', []) as $resourceKey => $resourceValue) {
             $resourceValue           = $this->parse($resourceValue) ?: $resourceValue;
             $resources[$resourceKey] = $resourceValue;
@@ -55,7 +61,23 @@ class ResourcesListener implements CasterContainer, ParserContainer
             ;
 
             if (false !== $resourceDetails['required'] && null === $resource) {
-                throw new NotFoundHttpException(sprintf('The resource %s could not be found', $resourceKey));
+                $message = sprintf('The resource %s could not be found', $resourceKey);
+
+                if (false === array_key_exists('on-missing', $resourceDetails)) {
+                    throw new NotFoundHttpException(sprintf('The resource %s could not be found', $resourceKey));
+                }
+
+                if (false === array_key_exists($resourceDetails['on-missing'], $this->exceptions)) {
+                    throw new \Exception(sprintf(
+                        'No exception are configurred for %d HTTP code, %s available',
+                        $resourceDetails['on-missing'],
+                        implode(', ', array_keys($this->exceptions))
+                    ));
+                }
+
+                $exception = $this->exceptions[$resourceDetails['on-missing']];
+
+                throw new $exception($message);
             }
 
             $request->attributes->set($resourceKey, $resource);
@@ -115,7 +137,7 @@ class ResourcesListener implements CasterContainer, ParserContainer
         if (array_keys($resourceDetails) === array_keys(array_values($resourceDetails))) {
             if (false === strpos($resourceDetails[0], ':')) {
                 throw new \RuntimeException('The first argument for a resource configuration, when expressed with a numerically indexed array, should be a string containing the service and the method used, seperated by a colon.');
-            } elseif (isset($resourceDetails[1]) && !is_array($resourceDetails[1])) {
+            } elseif (isset($resourceDetails[1]) && ! is_array($resourceDetails[1])) {
                 throw new \RuntimeException('The second argument for a resource configuration, when expressed with a numerically indexed array, should be an array of arguments.');
             }
 

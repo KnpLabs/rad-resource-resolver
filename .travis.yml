@@ -21,8 +21,10 @@ matrix:
           env: 'COMPOSER_FLAGS="--prefer-lowest --prefer-stable"'
 
 before_script:
+    - mv $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini $HOME/xdebug.ini || return 0
+    - composer global require hirak/prestissimo
     - composer update --prefer-source --dev $COMPOSER_FLAGS
 
 script:
-    - bin/phpspec run -fpretty
     - bin/php-cs-fixer --diff --dry-run -v fix
+    - bin/phpspec run -fpretty
