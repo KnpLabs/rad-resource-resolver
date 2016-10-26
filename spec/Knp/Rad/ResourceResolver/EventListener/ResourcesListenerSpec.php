@@ -11,6 +11,7 @@ use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 class ResourcesListenerSpec extends ObjectBehavior
@@ -202,5 +203,81 @@ class ResourcesListenerSpec extends ObjectBehavior
         $container->addResource('user', null)->shouldBeCalled();
 
         $this->resolveResources($event);
+    }
+
+    function it_throws_a_forbidden_exception_if_the_resource_could_not_be_found(
+        FilterControllerEvent $event,
+        Request $request,
+        ParameterBag $parameterBag,
+        $resolver,
+        $customSyntaxParser,
+        $variableCaster,
+        $container
+    ) {
+        $event->getRequest()->willReturn($request);
+        $request->attributes = $parameterBag;
+        $customPath          = '@app_user_repository::myMethod("myFirstParameter")';
+
+        $resources = [
+            'user' => $customPath,
+        ];
+
+        $parameterBag->get('_resources', [])->willReturn($resources);
+
+        $customSyntaxParser->supports($customPath)->willReturn(true);
+        $customSyntaxParser->parse($customPath)->willReturn([
+            'service'    => 'app_user_repository',
+            'method'     => 'myMethod',
+            'on-missing' => Response::HTTP_FORBIDDEN,
+            'arguments'  => ['myFirstParameter'],
+        ]);
+
+        $resolver
+            ->resolveResource('app_user_repository', 'myMethod', ['myFirstParameter'])
+            ->willReturn(null)
+        ;
+
+        $this
+            ->shouldThrow('Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException')
+            ->during('resolveResources', [$event])
+        ;
+    }
+
+    function it_throws_an_unauthorized_exception_if_the_resource_could_not_be_found(
+        FilterControllerEvent $event,
+        Request $request,
+        ParameterBag $parameterBag,
+        $resolver,
+        $customSyntaxParser,
+        $variableCaster,
+        $container
+    ) {
+        $event->getRequest()->willReturn($request);
+        $request->attributes = $parameterBag;
+        $customPath          = '@app_user_repository::myMethod("myFirstParameter")';
+
+        $resources = [
+            'user' => $customPath,
+        ];
+
+        $parameterBag->get('_resources', [])->willReturn($resources);
+
+        $customSyntaxParser->supports($customPath)->willReturn(true);
+        $customSyntaxParser->parse($customPath)->willReturn([
+            'service'    => 'app_user_repository',
+            'method'     => 'myMethod',
+            'on-missing' => Response::HTTP_UNAUTHORIZED,
+            'arguments'  => ['myFirstParameter'],
+        ]);
+
+        $resolver
+            ->resolveResource('app_user_repository', 'myMethod', ['myFirstParameter'])
+            ->willReturn(null)
+        ;
+
+        $this
+            ->shouldThrow('Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException')
+            ->during('resolveResources', [$event])
+        ;
     }
 }

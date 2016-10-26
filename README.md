@@ -83,6 +83,19 @@ By default, the Rad Resource Resolver throws a `Symfony\Component\HttpKernel\Exc
             required: false
 ```
 
+## Configure the exception when the resource is not found
+
+By default, is the resource is required but null, the componant will throw a 404 exception. You can customize this behavior by setting the `on-missing` parameter. Actually, 404, 401 and 403 are supported.
+
+```yaml
+    _resources:
+        buildings:
+            service: app.building.repository
+            method: findByCountryAndCityAndActivity
+            arguments: [$countryId, $citySlug, "School"]
+            on-missing: 401
+```
+
 ## Available resource resolving arguments
 
 - URL variables: you have to use the `$` prefix. For example, if your URL is `/products/{products}/` you can access to `product` value by using `$product`.
