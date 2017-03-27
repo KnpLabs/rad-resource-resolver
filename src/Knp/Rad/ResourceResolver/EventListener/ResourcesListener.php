@@ -8,22 +8,30 @@ use Knp\Rad\ResourceResolver\Parser;
 use Knp\Rad\ResourceResolver\ParserContainer;
 use Knp\Rad\ResourceResolver\ResourceContainer;
 use Knp\Rad\ResourceResolver\ResourceResolver;
+use Knp\Rad\ResourceResolver\RoutingNormalizer;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ResourcesListener implements CasterContainer, ParserContainer
 {
+    /** @var Parser[] */
     private $parsers;
+    /** @var ResourceContainer */
     private $container;
+    /** @var ResourceResolver */
     private $resolver;
+    /** @var ParameterCaster[] */
     private $parameterCasters;
+    /** @var RoutingNormalizer */
+    private $normalizer;
 
-    public function __construct(ResourceResolver $resolver, ResourceContainer $container)
+    public function __construct(ResourceResolver $resolver, ResourceContainer $container, RoutingNormalizer $normalizer)
     {
         $this->resolver         = $resolver;
         $this->container        = $container;
         $this->parsers          = [];
         $this->parameterCasters = [];
+        $this->normalizer       = $normalizer;
     }
 
     public function resolveResources(FilterControllerEvent $event)
@@ -37,7 +45,7 @@ class ResourcesListener implements CasterContainer, ParserContainer
         }
 
         foreach ($resources as $resourceKey => $resourceDetails) {
-            $resourceDetails = $this->normalizeResourceDetails($resourceDetails);
+            $resourceDetails = $this->normalizer->normalizeDeclaration($resourceDetails);
             $parameters      = [];
 
             foreach ($resourceDetails['arguments'] as $parameter) {
@@ -108,27 +116,5 @@ class ResourcesListener implements CasterContainer, ParserContainer
                 return $parameterCaster->cast($parameter);
             }
         }
-    }
-
-    private function normalizeResourceDetails($resourceDetails)
-    {
-        if (array_keys($resourceDetails) === array_keys(array_values($resourceDetails))) {
-            if (false === strpos($resourceDetails[0], ':')) {
-                throw new \RuntimeException('The first argument for a resource configuration, when expressed with a numerically indexed array, should be a string containing the service and the method used, seperated by a colon.');
-            } elseif (isset($resourceDetails[1]) && !is_array($resourceDetails[1])) {
-                throw new \RuntimeException('The second argument for a resource configuration, when expressed with a numerically indexed array, should be an array of arguments.');
-            }
-
-            list($service, $method) = explode(':', $resourceDetails[0]);
-
-            return [
-                'service'   => $service,
-                'method'    => $method,
-                'arguments' => isset($resourceDetails[1]) ? $resourceDetails[1] : [],
-                'required'  => isset($resourceDetails[2]) ? (bool) $resourceDetails[2] : true,
-            ];
-        }
-
-        return array_merge(['required' => true, 'arguments' => []], $resourceDetails);
     }
 }
