@@ -47,8 +47,8 @@ class ResourcesListenerSpec extends ObjectBehavior
     ) {
         $event->getRequest()->willReturn($request);
         $request->attributes = $parameterBag;
-        $customPath          = '@app_user_repository::myMethod("myFirstParameter", $id, false)';
-        $resources           = ['user' => $customPath];
+        $customPath = '@app_user_repository::myMethod("myFirstParameter", $id, false)';
+        $resources  = ['user' => $customPath];
 
         $parameterBag->get('_resources', [])->willReturn($resources);
 
@@ -173,7 +173,7 @@ class ResourcesListenerSpec extends ObjectBehavior
         $this->resolveResources($event);
     }
 
-    function it_throws_a_forbidden_exception_if_the_resource_could_not_be_found(
+    function it_throws_a_specific_exception_if_is_specified_and_the_resource_could_not_be_found(
         FilterControllerEvent $event,
         Request $request,
         ParameterBag $parameterBag,
@@ -184,7 +184,7 @@ class ResourcesListenerSpec extends ObjectBehavior
     ) {
         $event->getRequest()->willReturn($request);
         $request->attributes = $parameterBag;
-        $customPath          = '@app_user_repository::myMethod("myFirstParameter")';
+        $customPath = '@app_user_repository::myMethod("myFirstParameter")';
 
         $resources = [
             'user' => $customPath,
@@ -196,8 +196,10 @@ class ResourcesListenerSpec extends ObjectBehavior
         $customSyntaxParser->parse($customPath)->willReturn([
             'service'    => 'app_user_repository',
             'method'     => 'myMethod',
-            'on-missing' => Response::HTTP_FORBIDDEN,
             'arguments'  => ['myFirstParameter'],
+            'on-missing' => [
+                'throw' => Response::HTTP_FORBIDDEN,
+            ],
         ]);
 
         $resolver
@@ -211,7 +213,7 @@ class ResourcesListenerSpec extends ObjectBehavior
         ;
     }
 
-    function it_throws_an_unauthorized_exception_if_the_resource_could_not_be_found(
+    function it_throws_a_not_found_exception_if_no_exception_is_specified_and_the_resource_could_not_be_found(
         FilterControllerEvent $event,
         Request $request,
         ParameterBag $parameterBag,
@@ -222,7 +224,44 @@ class ResourcesListenerSpec extends ObjectBehavior
     ) {
         $event->getRequest()->willReturn($request);
         $request->attributes = $parameterBag;
-        $customPath          = '@app_user_repository::myMethod("myFirstParameter")';
+        $customPath = '@app_user_repository::myMethod("myFirstParameter")';
+
+        $resources = [
+            'user' => $customPath,
+        ];
+
+        $parameterBag->get('_resources', [])->willReturn($resources);
+
+        $customSyntaxParser->supports($customPath)->willReturn(true);
+        $customSyntaxParser->parse($customPath)->willReturn([
+            'service'   => 'app_user_repository',
+            'method'    => 'myMethod',
+            'arguments' => ['myFirstParameter'],
+        ]);
+
+        $resolver
+            ->resolveResource('app_user_repository', 'myMethod', ['myFirstParameter'])
+            ->willReturn(null)
+        ;
+
+        $this
+            ->shouldThrow('Symfony\Component\HttpKernel\Exception\NotFoundHttpException')
+            ->during('resolveResources', [$event])
+        ;
+    }
+
+    function it_throws_exception_if_a_bad_exception_is_specified_and_the_resource_could_not_be_found(
+        FilterControllerEvent $event,
+        Request $request,
+        ParameterBag $parameterBag,
+        $resolver,
+        $customSyntaxParser,
+        $variableCaster,
+        $container
+    ) {
+        $event->getRequest()->willReturn($request);
+        $request->attributes = $parameterBag;
+        $customPath = '@app_user_repository::myMethod("myFirstParameter")';
 
         $resources = [
             'user' => $customPath,
@@ -234,8 +273,10 @@ class ResourcesListenerSpec extends ObjectBehavior
         $customSyntaxParser->parse($customPath)->willReturn([
             'service'    => 'app_user_repository',
             'method'     => 'myMethod',
-            'on-missing' => Response::HTTP_UNAUTHORIZED,
             'arguments'  => ['myFirstParameter'],
+            'on-missing' => [
+                'throw' => 200,
+            ],
         ]);
 
         $resolver
@@ -244,7 +285,7 @@ class ResourcesListenerSpec extends ObjectBehavior
         ;
 
         $this
-            ->shouldThrow('Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException')
+            ->shouldThrow('\InvalidArgumentException')
             ->during('resolveResources', [$event])
         ;
     }

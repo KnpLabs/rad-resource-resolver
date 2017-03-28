@@ -9,7 +9,6 @@ use Knp\Rad\ResourceResolver\ParserContainer;
 use Knp\Rad\ResourceResolver\ResourceContainer;
 use Knp\Rad\ResourceResolver\ResourceResolver;
 use Knp\Rad\ResourceResolver\RoutingNormalizer;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -30,7 +29,7 @@ class ResourcesListener implements CasterContainer, ParserContainer
     /** @var RoutingNormalizer */
     private $normalizer;
 
-    public function __construct(ResourceResolver $resolver, ResourceContainer $container)
+    public function __construct(ResourceResolver $resolver, ResourceContainer $container, RoutingNormalizer $normalizer)
     {
         $this->resolver         = $resolver;
         $this->container        = $container;
@@ -41,7 +40,7 @@ class ResourcesListener implements CasterContainer, ParserContainer
 
     public function resolveResources(FilterControllerEvent $event)
     {
-        $request = $event->getRequest();
+        $request   = $event->getRequest();
         $resources = [];
 
         foreach ($request->attributes->get('_resources', []) as $resourceKey => $resourceValue) {
@@ -68,23 +67,14 @@ class ResourcesListener implements CasterContainer, ParserContainer
             ;
 
             if (false !== $resourceDetails['required'] && null === $resource) {
-                $message = sprintf('The resource %s could not be found', $resourceKey);
-
-                if (false === array_key_exists('on-missing', $resourceDetails)) {
+                if (!array_key_exists('on-missing', $resourceDetails)) {
                     throw new NotFoundHttpException(sprintf('The resource %s could not be found', $resourceKey));
                 }
 
-                if (false === array_key_exists($resourceDetails['on-missing'], $this->exceptions)) {
-                    throw new \Exception(sprintf(
-                        'No exception are configurred for %d HTTP code, %s available',
-                        $resourceDetails['on-missing'],
-                        implode(', ', array_keys($this->exceptions))
-                    ));
+                if (!is_array($resourceDetails['on-missing']) || !array_key_exists('throw', $resourceDetails['on-missing'])) {
+                    throw new \InvalidArgumentException('"on-missing" must be an array and contain "throw" parameter.');
                 }
-
-                $exception = $this->exceptions[$resourceDetails['on-missing']];
-
-                throw new $exception($message);
+                $this->throwMissingException($resourceDetails['on-missing'], $resourceKey);
             }
 
             $request->attributes->set($resourceKey, $resource);
@@ -113,6 +103,21 @@ class ResourcesListener implements CasterContainer, ParserContainer
         $this->parameterCasters[] = $parameterCaster;
 
         return $this;
+    }
+
+    private function throwMissingException(array $configuration, $resourceKey)
+    {
+        if (!in_array($configuration['throw'], array_keys($this->exceptions))) {
+            throw new \InvalidArgumentException(sprintf(
+                '%s is not an available HTTP return code. Available are %s.',
+                $configuration['throw'],
+                implode(', ', array_keys($this->exceptions))
+            ));
+        }
+
+        $message = sprintf('The resource %s was not found.', $resourceKey);
+
+        throw new $this->exceptions[$configuration['throw']]($message);
     }
 
     /**
