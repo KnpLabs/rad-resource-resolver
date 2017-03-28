@@ -6,6 +6,7 @@ use Knp\Rad\ResourceResolver\ParameterCaster;
 use Knp\Rad\ResourceResolver\Parser;
 use Knp\Rad\ResourceResolver\ResourceContainer;
 use Knp\Rad\ResourceResolver\ResourceResolver;
+use Knp\Rad\ResourceResolver\RoutingNormalizer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -19,9 +20,10 @@ class ResourcesListenerSpec extends ObjectBehavior
         ResourceResolver $resolver,
         Parser $customSyntaxParser,
         ParameterCaster $variableCaster,
-        ResourceContainer $container
+        ResourceContainer $container,
+        RoutingNormalizer $normalizer
     ) {
-        $this->beConstructedWith($resolver, $container);
+        $this->beConstructedWith($resolver, $container, $normalizer);
         $this->addParser($customSyntaxParser);
         $this->addParameterCaster($variableCaster);
     }
@@ -36,80 +38,40 @@ class ResourcesListenerSpec extends ObjectBehavior
         Request $request,
         ParameterBag $parameterBag,
         GenericEvent $genericEvent1,
-        GenericEvent $genericEvent2,
-        GenericEvent $genericEvent3,
         $resolver,
         $customSyntaxParser,
         $variableCaster,
-        $container
+        $container,
+        $normalizer
     ) {
         $event->getRequest()->willReturn($request);
         $request->attributes = $parameterBag;
-        $customPath          = '@app_user_repository::myMethod("myFirstParameter", true)';
-        $yamlArray           = [
-            'service'   => 'app_article_repository',
-            'method'    => 'myMethod',
-            'arguments' => ['foo', '$id'],
-        ];
-        $concise    = ['app_category_repository:myMethod', ['$id'], true];
-        $normalized = [
-            'service'   => 'app_category_repository',
-            'method'    => 'myMethod',
-            'arguments' => ['$id'],
-            'required'  => false,
-        ];
-
-        $resources = [
-            'user'     => $customPath,
-            'article'  => $yamlArray,
-            'category' => $concise,
-        ];
+        $customPath          = '@app_user_repository::myMethod("myFirstParameter", $id, false)';
+        $resources           = ['user' => $customPath];
 
         $parameterBag->get('_resources', [])->willReturn($resources);
 
         $customSyntaxParser->supports($customPath)->willReturn(true);
-        $customSyntaxParser->parse($customPath)->willReturn([
+        $customSyntaxParser->parse($customPath)->willReturn($declaration = [
             'service'   => 'app_user_repository',
             'method'    => 'myMethod',
-            'arguments' => ['myFirstParameter'],
+            'arguments' => ['myFirstParameter', '$id'],
+            'required'  => false,
         ]);
 
+        $normalizer->normalizeDeclaration($declaration)->willReturn($declaration);
+
+        $variableCaster->supports('myFirstParameter')->willReturn(false);
+        $variableCaster->supports('$id')->willReturn(true);
+        $variableCaster->cast('$id')->willReturn(240);
+
         $resolver
-            ->resolveResource('app_user_repository', 'myMethod', ['myFirstParameter'])
+            ->resolveResource('app_user_repository', 'myMethod', ['myFirstParameter', 240])
             ->willReturn($genericEvent1)
         ;
 
         $parameterBag->set('user', $genericEvent1)->shouldBeCalled();
-
-        $customSyntaxParser->supports($yamlArray)->willReturn(false);
-
-        $variableCaster->supports('myFirstParameter')->willReturn(false);
-        $variableCaster->supports('foo')->willReturn(false);
-        $variableCaster->supports('$id')->willReturn(true);
-        $variableCaster->cast('$id')->willReturn(240);
-
-        $resolver
-            ->resolveResource('app_article_repository', 'myMethod', ['foo', 240])
-            ->willReturn($genericEvent2)
-        ;
-
-        $parameterBag->set('article', $genericEvent2)->shouldBeCalled();
-
-        $customSyntaxParser->supports($concise)->willReturn(false);
-
-        $variableCaster->supports('$id')->willReturn(true);
-        $variableCaster->cast('$id')->willReturn(240);
-
-        $resolver
-            ->resolveResource('app_category_repository', 'myMethod', [240])
-            ->willReturn($genericEvent3)
-        ;
-
-        $parameterBag->set('category', $genericEvent3)->shouldBeCalled();
-
         $container->addResource('user', $genericEvent1)->shouldBeCalled();
-        $container->addResource('article', $genericEvent2)->shouldBeCalled();
-        $container->addResource('category', $genericEvent3)->shouldBeCalled();
 
         $this->resolveResources($event);
     }
@@ -135,8 +97,7 @@ class ResourcesListenerSpec extends ObjectBehavior
         ParameterBag $parameterBag,
         $resolver,
         $customSyntaxParser,
-        $variableCaster,
-        $container
+        $normalizer
     ) {
         $event->getRequest()->willReturn($request);
         $request->attributes = $parameterBag;
@@ -149,10 +110,16 @@ class ResourcesListenerSpec extends ObjectBehavior
         $parameterBag->get('_resources', [])->willReturn($resources);
 
         $customSyntaxParser->supports($customPath)->willReturn(true);
-        $customSyntaxParser->parse($customPath)->willReturn([
+        $customSyntaxParser->parse($customPath)->willReturn($declaration = [
             'service'   => 'app_user_repository',
             'method'    => 'myMethod',
             'arguments' => ['myFirstParameter'],
+        ]);
+        $normalizer->normalizeDeclaration($declaration)->willReturn([
+            'service'   => 'app_user_repository',
+            'method'    => 'myMethod',
+            'arguments' => ['myFirstParameter'],
+            'required'  => true,
         ]);
 
         $resolver
@@ -172,8 +139,8 @@ class ResourcesListenerSpec extends ObjectBehavior
         ParameterBag $parameterBag,
         $resolver,
         $customSyntaxParser,
-        $variableCaster,
-        $container
+        $container,
+        $normalizer
     ) {
         $event->getRequest()->willReturn($request);
         $request->attributes = $parameterBag;
@@ -186,12 +153,13 @@ class ResourcesListenerSpec extends ObjectBehavior
         $parameterBag->get('_resources', [])->willReturn($resources);
 
         $customSyntaxParser->supports($customPath)->willReturn(true);
-        $customSyntaxParser->parse($customPath)->willReturn([
+        $customSyntaxParser->parse($customPath)->willReturn($declaration = [
             'service'   => 'app_user_repository',
             'method'    => 'myMethod',
             'arguments' => ['myFirstParameter'],
             'required'  => false,
         ]);
+        $normalizer->normalizeDeclaration($declaration)->willReturn($declaration);
 
         $resolver
             ->resolveResource('app_user_repository', 'myMethod', ['myFirstParameter'])
