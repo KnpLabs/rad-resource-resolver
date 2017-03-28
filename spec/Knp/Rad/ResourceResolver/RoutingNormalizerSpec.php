@@ -70,7 +70,7 @@ class RoutingNormalizerSpec extends ObjectBehavior
 
     function it_throws_an_exception_if_arguments_are_not_an_array_for_associative_array_declaration()
     {
-        $this->shouldThrow(\InvalidArgumentException::class)->duringNormalizeDeclaration([
+        $this->shouldThrow('InvalidArgumentException')->duringNormalizeDeclaration([
             'service'   => 'app.repository.products',
             'method'    => 'findAll',
             'arguments' => 'invalid',
@@ -80,7 +80,7 @@ class RoutingNormalizerSpec extends ObjectBehavior
 
     function it_throws_an_exception_if_arguments_are_not_an_array_for_numerically_indexed_array_declaration()
     {
-        $this->shouldThrow(\InvalidArgumentException::class)->duringNormalizeDeclaration([
+        $this->shouldThrow('InvalidArgumentException')->duringNormalizeDeclaration([
             'app.repository.products:findAll',
             'invalid',
             true,
