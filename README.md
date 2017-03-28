@@ -60,7 +60,7 @@ In a yaml routing file, it could look like this :
 
 Every `key` under `_resources` will be return as a `$key` converted value in your request attributes.
 
-However, you can use a more concise way to express your resources configuration :
+However, you can use more concise ways to express your resources configuration :
 
 ```yaml
     product_show:
@@ -68,6 +68,9 @@ However, you can use a more concise way to express your resources configuration 
         defaults:
             _resources:
                 product: [ "my.product.repository:findBySlug", [ $slug ] ]
+                bestOffers: "my.product.repository.offer:findBestOffers"
+                bestSellers: "my.product.reposutory.sellers:findBestSellers"
+
 ```
 
 ## Optional Resources
