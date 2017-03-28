@@ -32,6 +32,14 @@ class ResourceResolverSpec extends ObjectBehavior
         ;
     }
 
+    function it_resolves_a_resource_from_an_invokable(Invokable $invokable, $container, $reference)
+    {
+        $container->get('app.my.invokable')->willReturn($invokable);
+        $invokable->__invoke()->willReturn($reference);
+
+        $this->resolveResource('app.my.invokable', null, [])->shouldReturn($reference);
+    }
+
     function it_dispatches_an_event_when_a_resource_is_resolved($container, EventDispatcherInterface $dispatcher, Route $route)
     {
         $this->beConstructedWith($container, $dispatcher);
@@ -66,5 +74,12 @@ class ResourceResolverSpec extends ObjectBehavior
         $route->setOption(Argument::cetera())->shouldNotBeCalled();
 
         $this->resolveResource('@app.my.route', 'setOption', ['"myFirstParameter"', true])->shouldReturn($result);
+    }
+}
+
+class Invokable
+{
+    public function __invoke()
+    {
     }
 }
