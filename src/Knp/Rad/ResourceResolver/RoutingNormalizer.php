@@ -22,6 +22,10 @@ class RoutingNormalizer
             return $this->normalizeArray($declaration);
         }
 
+        if (isset($declaration['arguments']) && !is_array($declaration['arguments'])) {
+            throw new \InvalidArgumentException('The "arguments" parameter should be an array of arguments.');
+        }
+
         // Adds default value to associative array
         return array_merge(['required' => true, 'arguments' => []], $declaration);
     }
@@ -45,10 +49,12 @@ class RoutingNormalizer
 
     private function normalizeArray($declaration)
     {
+        if (isset($declaration[1]) && !is_array($declaration[1])) {
+            throw new \InvalidArgumentException('The second argument for a resource configuration, when expressed with a numerically indexed array, should be an array of arguments.');
+        }
+
         if (false === strpos($declaration[0], ':')) {
             throw new \RuntimeException('The first argument for a resource configuration, when expressed with a numerically indexed array, should be a string containing the service and the method used, seperated by a colon.');
-        } elseif (isset($declaration[1]) && !is_array($declaration[1])) {
-            throw new \RuntimeException('The second argument for a resource configuration, when expressed with a numerically indexed array, should be an array of arguments.');
         }
 
         list($service, $method) = explode(':', $declaration[0]);
