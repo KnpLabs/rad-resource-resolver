@@ -35,10 +35,9 @@ class RoutingNormalizerSpec extends ObjectBehavior
     {
         $this->normalizeDeclaration([
             'service' => 'app_article_repository',
-            'method'  => 'myMethod',
         ])->shouldBeLike([
             'service'   => 'app_article_repository',
-            'method'    => 'myMethod',
+            'method'    => null,
             'arguments' => [],
             'required'  => true,
         ]);
@@ -88,4 +87,13 @@ class RoutingNormalizerSpec extends ObjectBehavior
         ]);
     }
 
+    function it_normalizes_invokable_in_array()
+    {
+        $this->normalizeDeclaration(['app.repository.bestOffers', ['$productId']])->shouldBeLike([
+            'service'   => 'app.repository.bestOffers',
+            'method'    => null,
+            'arguments' => ['$productId'],
+            'required'  => true,
+        ]);
+    }
 }

@@ -27,7 +27,7 @@ class RoutingNormalizer
         }
 
         // Adds default value to associative array
-        return array_merge(['required' => true, 'arguments' => []], $declaration);
+        return array_merge(['method' => null, 'required' => true, 'arguments' => []], $declaration);
     }
 
     private function normalizeString($declaration)
@@ -53,11 +53,12 @@ class RoutingNormalizer
             throw new \InvalidArgumentException('The second argument for a resource configuration, when expressed with a numerically indexed array, should be an array of arguments.');
         }
 
-        if (false === strpos($declaration[0], ':')) {
-            throw new \RuntimeException('The first argument for a resource configuration, when expressed with a numerically indexed array, should be a string containing the service and the method used, seperated by a colon.');
-        }
+        $service = $declaration[0];
+        $method  = null;
 
-        list($service, $method) = explode(':', $declaration[0]);
+        if (false !== strpos($declaration[0], ':')) {
+            list($service, $method) = explode(':', $declaration[0]);
+        }
 
         return [
             'service'   => $service,
