@@ -67,9 +67,13 @@ However, you can use more concise ways to express your resources configuration :
         path: /product/{slug}
         defaults:
             _resources:
-                product: [ "my.product.repository:findBySlug", [ $slug ] ]
-                bestOffers: "my.product.repository.offer:findBestOffers"
-                bestSellers: "my.product.reposutory.sellers:findBestSellers"
+                product: [ "my.repository.product:findBySlug", [ $slug ] ]
+                bestSellers: "my.repository.seller:findBestSellers"
+                # Supports invokable
+                bestOffers: "my.repository.bestOffers"
+                comments: ["my.repository.randomComments"]
+                # Invokable with arguments
+                relatedProducts: ["my.repository.relatedProducts", [10]]
 
 ```
 
