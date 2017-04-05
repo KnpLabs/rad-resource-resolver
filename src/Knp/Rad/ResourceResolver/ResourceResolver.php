@@ -52,7 +52,8 @@ class ResourceResolver
         }
 
         if (null === $event->getResource()) {
-            $resource = call_user_func_array([$service, $methodName], $arguments);
+            $callable = $methodName ? [$service, $methodName] : $service;
+            $resource = call_user_func_array($callable, $arguments);
             $event->setResource($resource);
         }
 

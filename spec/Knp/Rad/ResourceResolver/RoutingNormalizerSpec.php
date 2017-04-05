@@ -35,10 +35,9 @@ class RoutingNormalizerSpec extends ObjectBehavior
     {
         $this->normalizeDeclaration([
             'service' => 'app_article_repository',
-            'method'  => 'myMethod',
         ])->shouldBeLike([
             'service'   => 'app_article_repository',
-            'method'    => 'myMethod',
+            'method'    => null,
             'arguments' => [],
             'required'  => true,
         ]);
@@ -65,6 +64,35 @@ class RoutingNormalizerSpec extends ObjectBehavior
             'service'   => 'app.repository.product',
             'method'    => 'findNewest',
             'arguments' => [],
+            'required'  => true,
+        ]);
+    }
+
+    function it_throws_an_exception_if_arguments_are_not_an_array_for_associative_array_declaration()
+    {
+        $this->shouldThrow('InvalidArgumentException')->duringNormalizeDeclaration([
+            'service'   => 'app.repository.products',
+            'method'    => 'findAll',
+            'arguments' => 'invalid',
+            'required'  => true,
+        ]);
+    }
+
+    function it_throws_an_exception_if_arguments_are_not_an_array_for_numerically_indexed_array_declaration()
+    {
+        $this->shouldThrow('InvalidArgumentException')->duringNormalizeDeclaration([
+            'app.repository.products:findAll',
+            'invalid',
+            true,
+        ]);
+    }
+
+    function it_normalizes_invokable_in_array()
+    {
+        $this->normalizeDeclaration(['app.repository.bestOffers', ['$productId']])->shouldBeLike([
+            'service'   => 'app.repository.bestOffers',
+            'method'    => null,
+            'arguments' => ['$productId'],
             'required'  => true,
         ]);
     }
