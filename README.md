@@ -106,18 +106,18 @@ This means you can easily add your own `ParameterCasters` and `Parsers` to chang
 To add your own `ParameterCaster`, just tag it with `knp_rad_resource_resolver.parameter_caster`.
 The tag to add a `Parser` is `knp_rad_resource_resolver.parser`.
 
-#Events
+# Events
 
 All events are listed [here](./src/Knp/Rad/ResourceResolver/Events.php).
 
-##How can I hook resource resolution ?
+## How can I hook resource resolution ?
 
 There is two events : 
 
     - knp_rad_resource_resolver.before_resource_resolved:  dispatched before the resolution. You can set the resource before the resolution.
     - knp_rad_resource_resolver.resource_resolved:         dispatched after the resolution.
 
-##How can I get all resolved resources ?
+## How can I get all resolved resources ?
 
 There is a service alias named `knp_rad_resource_resolver.resource_container` where you can get all resolved resources. You can also listen to the event `knp_rad_resource_resolver.resource.added` and be notified when a resource is added to the container.
 
