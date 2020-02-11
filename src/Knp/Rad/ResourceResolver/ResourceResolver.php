@@ -48,7 +48,7 @@ class ResourceResolver
         $event = new BeforeResourceResolvedEvent($serviceId, $service, $methodName, $arguments);
 
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch(Events::BEFORE_RESOURCE_RESOLVED, $event);
+            $this->dispatcher->dispatch($event,Events::BEFORE_RESOURCE_RESOLVED);
         }
 
         if (null === $event->getResource()) {
@@ -58,7 +58,7 @@ class ResourceResolver
         }
 
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch(Events::RESOURCE_RESOLVED, new ResourceResolvedEvent($event));
+            $this->dispatcher->dispatch(new ResourceResolvedEvent($event),Events::RESOURCE_RESOLVED);
         }
 
         return $event->getResource();

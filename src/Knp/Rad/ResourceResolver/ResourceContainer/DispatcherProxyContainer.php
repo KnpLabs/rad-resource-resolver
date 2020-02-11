@@ -58,7 +58,7 @@ class DispatcherProxyContainer implements ContainerInterface
 
         $this
             ->dispatcher
-            ->dispatch(Events::RESOURCES_ADDED, new ResourceEvent($key, $resource, $this->wrapped))
+            ->dispatch(new ResourceEvent($key, $resource, $this->wrapped),Events::RESOURCES_ADDED)
         ;
 
         return $this;
@@ -74,7 +74,7 @@ class DispatcherProxyContainer implements ContainerInterface
 
         $this
             ->dispatcher
-            ->dispatch(Events::RESOURCES_REMOVED, new ResourceEvent($key, $resource, $this->wrapped))
+            ->dispatch(new ResourceEvent($key, $resource, $this->wrapped), Events::RESOURCES_REMOVED)
         ;
 
         return $this;
