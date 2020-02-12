@@ -3,7 +3,7 @@
 namespace Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent;
 
 use Knp\Rad\ResourceResolver\Event\ResourceResolvedEvent as EventInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 final class ResourceResolvedEvent extends Event implements EventInterface
 {
