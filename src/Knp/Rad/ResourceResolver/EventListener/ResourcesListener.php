@@ -9,7 +9,7 @@ use Knp\Rad\ResourceResolver\ParserContainer;
 use Knp\Rad\ResourceResolver\ResourceContainer;
 use Knp\Rad\ResourceResolver\ResourceResolver;
 use Knp\Rad\ResourceResolver\RoutingNormalizer;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ResourcesListener implements CasterContainer, ParserContainer
@@ -34,7 +34,7 @@ class ResourcesListener implements CasterContainer, ParserContainer
         $this->normalizer       = $normalizer;
     }
 
-    public function resolveResources(FilterControllerEvent $event)
+    public function resolveResources(ControllerEvent $event)
     {
         $request = $event->getRequest();
 

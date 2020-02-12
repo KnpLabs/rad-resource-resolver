@@ -3,9 +3,9 @@
 namespace Knp\Rad\ResourceResolver\Event\ResourceEvent;
 
 use Knp\Rad\ResourceResolver\ResourceContainer;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
-final class ResourceEvent extends Event
+final class ResourceEvent extends EventDispatcher
 {
     /**
      * @var string
